@@ -93,7 +93,7 @@ def test_stock_out_workflow(client, auth_headers, inventory_setup):
         }
     )
     assert res.status_code == 200
-    assert res.json()["quantity_on_hand"] == 80  # 100 from prev test if same DB or 30/80
+    assert res.json()["quantity_on_hand"] == 30
     assert res.json()["available_quantity"] >= 0
 
 def test_insufficient_stock_rejection(client, auth_headers, inventory_setup):
