@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import Base, engine, SessionLocal
-from app.routers import auth, hr, crm, categories, products
+from app.routers import auth, users, categories, products, warehouses, inventory, hr, crm
 from app.routers.auth import seed_default_roles_and_admin
 
 # Initialize database tables
@@ -15,8 +15,9 @@ with SessionLocal() as db:
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="SmartERP Enterprise Resource Planning System - Collaborative Platform",
-    docs_url="/api/docs",
+    description="SmartERP Enterprise Resource Planning System — Collaborative Platform (Member 1 Auth & Security, Member 4 Inventory)",
+    docs_url="/docs",
+    redoc_url="/redoc",
     openapi_url="/api/openapi.json"
 )
 
@@ -29,10 +30,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include Authentication & Module Routers
+# Authentication & Security (Member 1)
 app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(users.router, prefix=settings.API_V1_STR)
+
+# Inventory Management Subsystem (Member 4)
 app.include_router(categories.router, prefix=settings.API_V1_STR)
 app.include_router(products.router, prefix=settings.API_V1_STR)
+app.include_router(warehouses.router, prefix=settings.API_V1_STR)
+app.include_router(inventory.router, prefix=settings.API_V1_STR)
+
+# Module Placeholders for Teammates
 app.include_router(hr.router, prefix=settings.API_V1_STR)
 app.include_router(crm.router, prefix=settings.API_V1_STR)
 
@@ -42,7 +50,8 @@ def root():
         "system": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "status": "Online",
-        "documentation": "/api/docs"
+        "documentation": "/docs",
+        "redoc": "/redoc"
     }
 
 @app.get("/health")
