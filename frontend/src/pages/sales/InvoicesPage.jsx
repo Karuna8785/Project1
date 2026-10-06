@@ -9,13 +9,10 @@ import { formatCurrency, formatDate } from '../../utils/constants';
 import {
   Plus,
   Search,
-  Receipt,
   CreditCard,
   Printer,
   Trash2,
   Loader2,
-  DollarSign,
-  AlertTriangle,
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -47,7 +44,7 @@ export const InvoicesPage = () => {
     try {
       const data = await salesService.getInvoices(statusFilter, search);
       setInvoices(data);
-    } catch (err) {
+    } catch {
       notify.error('Failed to load invoices');
     } finally {
       setLoading(false);

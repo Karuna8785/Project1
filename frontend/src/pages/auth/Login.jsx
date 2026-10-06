@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNotify } from '../../context/NotificationContext';
-import { Eye, EyeOff, Lock, User, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 
 export const Login = () => {
   const { login } = useAuth();

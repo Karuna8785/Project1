@@ -18,9 +18,7 @@ import {
   Menu,
   X,
   Plus,
-  ShieldCheck,
   ChevronDown,
-  Sparkles,
 } from 'lucide-react';
 
 export const DashboardLayout = () => {

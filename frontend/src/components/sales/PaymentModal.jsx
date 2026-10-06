@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../common/Modal';
 import { salesService } from '../../services/salesService';
 import { useNotify } from '../../context/NotificationContext';
-import { Loader2, DollarSign } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { formatCurrency } from '../../utils/constants';
 
 export const PaymentModal = ({ isOpen, onClose, onSuccess, preselectedInvoice = null }) => {
@@ -18,6 +18,25 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, preselectedInvoice = 
     reference_number: '',
     notes: 'Payment received towards invoice settlement.',
   });
+
+  const loadUnpaidInvoices = async () => {
+    try {
+      const allInvs = await salesService.getInvoices();
+      const pending = allInvs.filter((inv) => inv.balance_due > 0);
+      setInvoices(pending);
+      if (pending.length > 0) {
+        const first = pending[0];
+        setFormData((prev) => ({
+          ...prev,
+          invoice_id: first.id,
+          customer_name: first.customer_name,
+          amount: first.balance_due,
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -35,26 +54,6 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, preselectedInvoice = 
       }
     }
   }, [isOpen, preselectedInvoice]);
-
-  const loadUnpaidInvoices = async () => {
-    try {
-      const allInvs = await salesService.getInvoices();
-      // Filter unpaid or partially paid
-      const pending = allInvs.filter((inv) => inv.balance_due > 0);
-      setInvoices(pending);
-      if (pending.length > 0) {
-        const first = pending[0];
-        setFormData((prev) => ({
-          ...prev,
-          invoice_id: first.id,
-          customer_name: first.customer_name,
-          amount: first.balance_due,
-        }));
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const handleInvoiceChange = (e) => {
     const invId = parseInt(e.target.value, 10);

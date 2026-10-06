@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../common/Modal';
 import { salesService } from '../../services/salesService';
 import { useNotify } from '../../context/NotificationContext';
-import { Plus, Trash2, Calculator, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Loader2 } from 'lucide-react';
 import { formatCurrency } from '../../utils/constants';
 
 export const QuotationModal = ({ isOpen, onClose, onSuccess }) => {
@@ -33,12 +33,6 @@ export const QuotationModal = ({ isOpen, onClose, onSuccess }) => {
     ],
   });
 
-  useEffect(() => {
-    if (isOpen) {
-      loadMasterData();
-    }
-  }, [isOpen]);
-
   const loadMasterData = async () => {
     try {
       const [custList, prodList] = await Promise.all([
@@ -51,6 +45,12 @@ export const QuotationModal = ({ isOpen, onClose, onSuccess }) => {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      loadMasterData();
+    }
+  }, [isOpen]);
 
   const handleCustomerChange = (e) => {
     const custId = e.target.value;

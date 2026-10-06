@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from '../common/Modal';
-import { Printer, Download, Building2 } from 'lucide-react';
+import { Printer } from 'lucide-react';
 import { formatCurrency, formatDate } from '../../utils/constants';
 
 export const DocumentPrintModal = ({ isOpen, onClose, document, docType = 'Quotation' }) => {
@@ -11,8 +11,6 @@ export const DocumentPrintModal = ({ isOpen, onClose, document, docType = 'Quota
   };
 
   const isInvoice = docType === 'Invoice';
-  const isOrder = docType === 'Sales Order';
-  const isQuote = docType === 'Quotation';
 
   const docNumber =
     document.quote_number || document.order_number || document.invoice_number || 'DOC-001';

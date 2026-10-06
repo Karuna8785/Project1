@@ -10,7 +10,6 @@ import {
   CreditCard,
   Printer,
   Loader2,
-  CheckCircle2,
   Landmark,
   Smartphone,
   Banknote,
@@ -37,7 +36,7 @@ export const PaymentsPage = () => {
     try {
       const data = await salesService.getPayments(null, search);
       setPayments(data);
-    } catch (err) {
+    } catch {
       notify.error('Failed to load payment receipts');
     } finally {
       setLoading(false);
