@@ -1,17 +1,33 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.security import verify_password, get_password_hash, create_access_token
 from app.models.user import User, Role, Permission
+from app.models.audit_log import AuditLog
 from app.schemas.user import LoginRequest, Token, UserCreate, UserResponse
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, require_permission
+from app.services.audit_service import AuditService
 
 router = APIRouter(prefix="/auth", tags=["Authentication & Security"])
 
+def get_client_ip(request: Request) -> str:
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "127.0.0.1"
+
 def seed_default_roles_and_admin(db: Session):
-    # Ensure inventory permissions exist
     permissions_data = [
-        # Inventory permissions
+        ("AUTH_LOGIN", "User Login Permission", "AUTH"),
+        ("AUTH_REGISTER", "User Registration Permission", "AUTH"),
+        ("USER_CREATE", "Create System User", "USERS"),
+        ("USER_READ", "Read System Users", "USERS"),
+        ("USER_UPDATE", "Update System User", "USERS"),
+        ("USER_DELETE", "Delete System User", "USERS"),
+        ("ROLE_CREATE", "Create System Role", "ROLES"),
+        ("ROLE_READ", "Read System Roles", "ROLES"),
+        ("ROLE_UPDATE", "Update System Role", "ROLES"),
+        ("ROLE_DELETE", "Delete System Role", "ROLES"),
         ("inventory.view", "View Inventory", "Inventory"),
         ("inventory.product.create", "Create Product", "Inventory"),
         ("inventory.product.update", "Update Product", "Inventory"),
@@ -26,12 +42,6 @@ def seed_default_roles_and_admin(db: Session):
         ("inventory.stock.out", "Stock Out", "Inventory"),
         ("inventory.stock.adjust", "Stock Adjustment", "Inventory"),
         ("inventory.stock.transfer", "Stock Transfer", "Inventory"),
-        # Other module view permissions
-        ("hr.view", "View HR", "HR"),
-        ("crm.view", "View CRM", "CRM"),
-        ("sales.view", "View Sales", "Sales"),
-        ("procurement.view", "View Procurement", "Procurement"),
-        ("reports.view", "View Reports", "Reports"),
     ]
     
     perm_map = {}
@@ -44,18 +54,31 @@ def seed_default_roles_and_admin(db: Session):
         perm_map[code] = p
 
     # Roles
-    admin_role = db.query(Role).filter(Role.name == "Admin").first()
+    admin_role = db.query(Role).filter(Role.name == "ADMIN").first()
     if not admin_role:
-        admin_role = Role(name="Admin", description="Full system access across all ERP modules")
+        admin_role = Role(name="ADMIN", description="Unrestricted enterprise administration")
         admin_role.permissions = list(perm_map.values())
         db.add(admin_role)
         db.flush()
 
-    inventory_role = db.query(Role).filter(Role.name == "Inventory Manager").first()
-    if not inventory_role:
-        inventory_role = Role(name="Inventory Manager", description="Manage inventory, products, categories, warehouses and stock")
-        inventory_role.permissions = [p for code, p in perm_map.items() if code.startswith("inventory.") or code in ("reports.view", "sales.view", "procurement.view")]
-        db.add(inventory_role)
+    manager_role = db.query(Role).filter(Role.name == "MANAGER").first()
+    if not manager_role:
+        manager_role = Role(name="MANAGER", description="Operational Manager with full Inventory authority")
+        manager_role.permissions = [
+            p for code, p in perm_map.items()
+            if code.startswith("inventory.") or code in ("AUTH_LOGIN", "USER_READ", "ROLE_READ")
+        ]
+        db.add(manager_role)
+        db.flush()
+
+    employee_role = db.query(Role).filter(Role.name == "EMPLOYEE").first()
+    if not employee_role:
+        employee_role = Role(name="EMPLOYEE", description="Standard Enterprise Employee")
+        employee_role.permissions = [
+            p for code, p in perm_map.items()
+            if code in ("AUTH_LOGIN", "inventory.view")
+        ]
+        db.add(employee_role)
         db.flush()
 
     # Admin user
@@ -72,25 +95,25 @@ def seed_default_roles_and_admin(db: Session):
         )
         db.add(admin_user)
 
-    # Inventory Manager user
+    # Manager user
     inv_user = db.query(User).filter(User.username == "inventory_manager").first()
     if not inv_user:
         inv_user = User(
             email="inventory@smarterp.local",
             username="inventory_manager",
-            full_name="Inventory Specialist",
+            full_name="Inventory Manager",
             hashed_password=get_password_hash("Inventory@123"),
             is_active=True,
             is_superuser=False,
-            roles=[inventory_role]
+            roles=[manager_role]
         )
         db.add(inv_user)
 
     db.commit()
 
 @router.post("/login", response_model=Token)
-def login(payload: LoginRequest, db: Session = Depends(get_db)):
-    # Auto-seed defaults if database is fresh
+def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)):
+    ip = get_client_ip(request)
     if db.query(User).count() == 0:
         seed_default_roles_and_admin(db)
         
@@ -99,12 +122,34 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     ).first()
 
     if not user or not verify_password(payload.password, user.hashed_password):
+        AuditService.log(
+            db=db,
+            action="FAILED_LOGIN",
+            description=f"Failed login attempt for '{payload.username_or_email}'",
+            ip_address=ip
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username/email or password"
         )
     if not user.is_active:
+        AuditService.log(
+            db=db,
+            action="FAILED_LOGIN",
+            description=f"Attempted login on inactive account '{user.username}'",
+            user_id=user.id,
+            ip_address=ip
+        )
         raise HTTPException(status_code=400, detail="Account is disabled")
+
+    # Record successful login
+    AuditService.log(
+        db=db,
+        action="LOGIN",
+        description=f"User '{user.username}' logged in successfully.",
+        user_id=user.id,
+        ip_address=ip
+    )
 
     access_token = create_access_token(data={"sub": user.username})
     user_resp = UserResponse(
@@ -120,17 +165,23 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     )
     return Token(access_token=access_token, token_type="bearer", user=user_resp)
 
-@router.post("/register", response_model=UserResponse)
-def register(payload: UserCreate, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(
-        (User.username == payload.username) | (User.email == payload.email)
-    ).first()
-    if existing:
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+def register(payload: UserCreate, request: Request, db: Session = Depends(get_db)):
+    ip = get_client_ip(request)
+    existing_email = db.query(User).filter(User.email == payload.email).first()
+    if existing_email:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User with this email or username already exists"
+            detail="A user with this email address already exists"
         )
-    
+
+    existing_user = db.query(User).filter(User.username == payload.username).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A user with this username already exists"
+        )
+
     new_user = User(
         email=payload.email,
         username=payload.username,
@@ -139,20 +190,30 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
         is_active=payload.is_active,
         is_superuser=False
     )
-    
-    # Assign roles if provided
+
+    # Assign default role if none specified
     if payload.roles:
         assigned = db.query(Role).filter(Role.name.in_(payload.roles)).all()
         new_user.roles = assigned
     else:
-        inv_role = db.query(Role).filter(Role.name == "Inventory Manager").first()
-        if inv_role:
-            new_user.roles = [inv_role]
+        emp_role = db.query(Role).filter(Role.name == "EMPLOYEE").first()
+        if not emp_role:
+            emp_role = db.query(Role).filter(Role.name == "MANAGER").first()
+        if emp_role:
+            new_user.roles = [emp_role]
 
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    
+
+    AuditService.log(
+        db=db,
+        action="REGISTER",
+        description=f"New user registered: '{new_user.username}' ({new_user.email})",
+        user_id=new_user.id,
+        ip_address=ip
+    )
+
     return UserResponse(
         id=new_user.id,
         email=new_user.email,
@@ -178,3 +239,33 @@ def get_current_user_profile(current_user: User = Depends(get_current_user)):
         roles=[r for r in current_user.roles],
         permissions=list(current_user.permissions)
     )
+
+@router.post("/logout")
+def logout(request: Request, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    ip = get_client_ip(request)
+    AuditService.log(
+        db=db,
+        action="LOGOUT",
+        description=f"User '{current_user.username}' logged out.",
+        user_id=current_user.id,
+        ip_address=ip
+    )
+    return {"message": "Logged out successfully"}
+
+@router.get("/protected")
+def protected_test_route(current_user: User = Depends(get_current_user)):
+    return {
+        "message": "Access granted to protected endpoint",
+        "username": current_user.username,
+        "is_authenticated": True
+    }
+
+@router.get("/admin-only")
+def admin_only_test_route(current_user: User = Depends(get_current_user)):
+    if not current_user.is_superuser and not any(r.name == "ADMIN" for r in current_user.roles):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Administrator access required")
+    return {
+        "message": "Access granted to admin-only endpoint",
+        "username": current_user.username,
+        "role": "ADMIN"
+    }

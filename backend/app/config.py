@@ -1,5 +1,5 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "SmartERP"
@@ -18,9 +18,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY", "smarterp-super-secret-production-grade-jwt-key-2026")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
-    
-    class Config:
-        env_file = ".env"
-        extra = "allow"
+
+    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 settings = Settings()
