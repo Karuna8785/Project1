@@ -10,10 +10,10 @@ REM Determine current directory
 set "ROOT_DIR=%~dp0"
 
 echo [1/2] Launching FastAPI Backend (Uvicorn)...
-start "SmartERP Backend (FastAPI)" powershell -NoExit -Command "cd '%ROOT_DIR%backend'; if (Test-Path .venv\Scripts\activate) { .\.venv\Scripts\activate }; uvicorn app.main:app --reload --host 127.0.0.1 --port 8000"
+start "SmartERP Backend (FastAPI)" cmd /k "cd /d "%ROOT_DIR%backend" && (if exist ".venv\Scripts\activate.bat" (call .venv\Scripts\activate.bat) else (echo No venv found, using system Python)) && python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000"
 
 echo [2/2] Launching React Vite Frontend...
-start "SmartERP Frontend (Vite)" powershell -NoExit -Command "cd '%ROOT_DIR%frontend'; npm run dev"
+start "SmartERP Frontend (Vite)" cmd /k "cd /d "%ROOT_DIR%frontend" && npm run dev"
 
 echo.
 echo ===================================================
