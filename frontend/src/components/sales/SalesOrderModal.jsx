@@ -34,12 +34,6 @@ export const SalesOrderModal = ({ isOpen, onClose, onSuccess }) => {
     ],
   });
 
-  useEffect(() => {
-    if (isOpen) {
-      loadMasterData();
-    }
-  }, [isOpen]);
-
   const loadMasterData = async () => {
     try {
       const [custList, prodList] = await Promise.all([
@@ -52,6 +46,12 @@ export const SalesOrderModal = ({ isOpen, onClose, onSuccess }) => {
       console.error(err);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      loadMasterData();
+    }
+  }, [isOpen]);
 
   const handleCustomerChange = (e) => {
     const custId = e.target.value;

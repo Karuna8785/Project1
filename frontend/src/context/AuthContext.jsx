@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { authService } from '../services/authService';
 
-const AuthContext = createContext(null);
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -10,6 +10,28 @@ export const AuthProvider = ({ children }) => {
   });
   const [token, setToken] = useState(() => localStorage.getItem('smarterp_token'));
   const [loading, setLoading] = useState(true);
+
+  const logout = useCallback(async () => {
+    await authService.logout();
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('smarterp_token');
+    localStorage.removeItem('smarterp_user');
+  }, []);
+
+  const login = useCallback(async (username_or_email, password) => {
+    const data = await authService.login(username_or_email, password);
+    setToken(data.access_token);
+    setUser(data.user);
+    localStorage.setItem('smarterp_token', data.access_token);
+    localStorage.setItem('smarterp_user', JSON.stringify(data.user));
+    return data.user;
+  }, []);
+
+  const register = useCallback(async (userData) => {
+    const data = await authService.register(userData);
+    return data;
+  }, []);
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -21,35 +43,13 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('smarterp_user', JSON.stringify(freshUser));
         } catch (err) {
           console.warn('Session verification failed, logging out', err);
-          logout();
+          await logout();
         }
       }
       setLoading(false);
     };
     verifyAuth();
-  }, []);
-
-  const login = async (username_or_email, password) => {
-    const data = await authService.login(username_or_email, password);
-    setToken(data.access_token);
-    setUser(data.user);
-    localStorage.setItem('smarterp_token', data.access_token);
-    localStorage.setItem('smarterp_user', JSON.stringify(data.user));
-    return data.user;
-  };
-
-  const register = async (userData) => {
-    const data = await authService.register(userData);
-    return data;
-  };
-
-  const logout = async () => {
-    await authService.logout();
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('smarterp_token');
-    localStorage.removeItem('smarterp_user');
-  };
+  }, [logout]);
 
   const value = {
     user,

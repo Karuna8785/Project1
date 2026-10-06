@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { salesService } from '../../services/salesService';
 import { StatCard } from '../../components/common/StatCard';
 import { Badge } from '../../components/common/Badge';
-import { formatCurrency, formatDate } from '../../utils/constants';
+import { formatCurrency } from '../../utils/constants';
 import {
   DollarSign,
   TrendingUp,
@@ -11,7 +11,6 @@ import {
   ShoppingBag,
   FileSpreadsheet,
   ArrowUpRight,
-  Sparkles,
   RefreshCw,
   Package,
 } from 'lucide-react';

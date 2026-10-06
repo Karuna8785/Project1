@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNotify } from '../../context/NotificationContext';
 import api from '../../services/api';
-import { ShieldCheck, User, Mail, Key, Lock, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { ShieldCheck, Key, Lock, CheckCircle2 } from 'lucide-react';
 import { formatDate } from '../../utils/constants';
 
 export const ProfilePage = () => {
