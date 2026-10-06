@@ -5,6 +5,14 @@ export default {
     extend: {
       colors: {
         primary: {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        brand: {
           50: '#eef2ff',
           100: '#e0e7ff',
           200: '#c7d2fe',

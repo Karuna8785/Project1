@@ -35,6 +35,73 @@ dist/
 .vite/
 
 # IDE
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+*.db
+*.sqlite3
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.npm
+.eslintcache
+
+# Environment & IDE
+.env
+.env.local
+.venv/
+env/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Databases & local stores
+*.db
+*.sqlite
+*.sqlite3
+smarterp.db
+
+# Environment variables
+.env
+backend/.env
+backend/.env.local
+
+# IDE & OS
 .vscode/
 .idea/
 *.swp
