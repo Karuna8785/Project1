@@ -1,43 +1,9 @@
-/**
- * SmartERP - Auth Context Stub
- * Member 1 will replace this with real JWT authentication.
- *
- * Current behavior: Mock logged-in admin user for HR module development.
- */
-import { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { authService } from '../services/authService';
 
-const AuthContext = createContext(null)
+export const AuthContext = createContext(null);
 
-// Mock admin user — replace when Member 1 integrates
-const MOCK_USER = {
-  id: 1,
-  full_name: 'Admin User',
-  email: 'admin@smarterp.com',
-  username: 'admin',
-  role: 'ADMIN',
-}
-
-export function AuthProvider({ children }) {
-  const [user] = useState(MOCK_USER)
-  // Member 1 will manage: token, login(), logout(), loading state, etc.
-
-  return (
-    <AuthContext.Provider value={{ user, isAuthenticated: true }}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used inside AuthProvider')
-  return ctx
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authApi } from '../api/authApi';
-
-const AuthContext = createContext(null);
-
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem('smarterp_user');
@@ -49,56 +15,66 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('smarterp_token'));
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function verifyAuth() {
-      if (token) {
-        try {
-          const freshUser = await authApi.getMe();
-          setUser(freshUser);
-          localStorage.setItem('smarterp_user', JSON.stringify(freshUser));
-        } catch {
-          logout();
-        }
-      }
-      setLoading(false);
-    }
-    verifyAuth();
-  }, [token]);
+  const logout = useCallback(async () => {
+    await authService.logout();
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('smarterp_token');
+    localStorage.removeItem('smarterp_user');
+  }, []);
 
-  const login = async (usernameOrEmail, password) => {
-    const data = await authApi.login(usernameOrEmail, password);
+  const login = useCallback(async (username_or_email, password) => {
+    const data = await authService.login(username_or_email, password);
     setToken(data.access_token);
     setUser(data.user);
     localStorage.setItem('smarterp_token', data.access_token);
     localStorage.setItem('smarterp_user', JSON.stringify(data.user));
     return data.user;
+  }, []);
+
+  const register = useCallback(async (userData) => {
+    const data = await authService.register(userData);
+    return data;
+  }, []);
+
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const storedToken = localStorage.getItem('smarterp_token');
+      if (storedToken) {
+        try {
+          const freshUser = await authService.getMe();
+          setUser(freshUser);
+          localStorage.setItem('smarterp_user', JSON.stringify(freshUser));
+        } catch (err) {
+          console.warn('Session verification failed, logging out', err);
+          await logout();
+        }
+      }
+      setLoading(false);
+    };
+    verifyAuth();
+  }, [logout]);
+
+  const value = {
+    user,
+    token,
+    loading,
+    isAuthenticated: !!token && !!user,
+    role: user?.role || (user?.roles?.[0]?.name) || 'EMPLOYEE',
+    login,
+    register,
+    logout,
   };
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('smarterp_token');
-    localStorage.removeItem('smarterp_user');
-  };
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
 
-  const hasPermission = (permissionCode) => {
-    if (!user) return false;
-    if (user.is_superuser) return true;
-    if (!user.permissions) return false;
-    return user.permissions.includes('*') || user.permissions.includes(permissionCode);
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout, hasPermission }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export function useAuth() {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}
+};
+
+export default AuthContext;

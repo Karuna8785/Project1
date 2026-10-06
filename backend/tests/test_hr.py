@@ -10,9 +10,15 @@ from app.database.database import Base, get_db
 from app.main import app
 from datetime import date, timedelta
 
+from sqlalchemy.pool import StaticPool
+
 # Use in-memory SQLite for tests
-TEST_DATABASE_URL = "sqlite:///./test_hr.db"
-engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+TEST_DATABASE_URL = "sqlite:///:memory:"
+engine = create_engine(
+    TEST_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -24,9 +30,14 @@ def override_get_db():
         db.close()
 
 
-app.dependency_overrides[get_db] = override_get_db
+@pytest.fixture(autouse=True, scope="module")
+def setup_hr_db():
+    Base.metadata.create_all(bind=engine)
+    app.dependency_overrides[get_db] = override_get_db
+    yield
+    app.dependency_overrides.pop(get_db, None)
+    Base.metadata.drop_all(bind=engine)
 
-Base.metadata.create_all(bind=engine)
 
 client = TestClient(app)
 

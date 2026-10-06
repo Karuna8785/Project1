@@ -1,11 +1,13 @@
 @echo off
-TITLE SmartERP Launcher
+TITLE SmartERP - Enterprise Platform Launcher
+cls
 echo ============================================================================
-echo                      Starting SmartERP Platform
+echo                      Starting SmartERP Enterprise Platform
+echo  Modules: Auth, HR, CRM, Inventory, Sales, Procurement
 echo ============================================================================
 echo.
 
-SET ROOT_DIR=%~dp0
+SET "ROOT_DIR=%~dp0"
 cd /d "%ROOT_DIR%"
 
 :: Check if Node is in PATH, if not fallback to portable location
@@ -32,24 +34,23 @@ if not exist "frontend\node_modules" (
     cd ..
 )
 
-echo [1/2] Launching SmartERP FastAPI Backend (http://localhost:8000)...
-start "SmartERP - Backend API" powershell -NoExit -Command "cd '%ROOT_DIR%backend'; .\.venv\Scripts\activate; uvicorn app.main:app --reload --port 8000"
+echo [1/2] Launching FastAPI Backend (Uvicorn)...
+start "SmartERP Backend (FastAPI)" cmd /k "cd /d "%ROOT_DIR%backend" && (if exist ".venv\Scripts\activate.bat" (call .venv\Scripts\activate.bat) else (echo No venv found, using system Python)) && python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000"
 
-echo [2/2] Launching SmartERP React Frontend (http://localhost:5173)...
-start "SmartERP - Frontend Web" powershell -NoExit -Command "cd '%ROOT_DIR%frontend'; $env:PATH = 'C:\Users\DELL\nodejs\node-v20.18.0-win-x64;' + $env:PATH; npm run dev"
+echo [2/2] Launching React Vite Frontend...
+start "SmartERP Frontend (Vite)" cmd /k "cd /d "%ROOT_DIR%frontend" && npm run dev"
 
 echo.
 echo ============================================================================
-echo SmartERP successfully launched!
+echo SmartERP servers are starting up in separate windows!
 echo.
 echo - Web Application: http://localhost:5173
-echo - API Server:     http://localhost:8000
-echo - Swagger Docs:   http://localhost:8000/docs
+echo - API Server:      http://localhost:8000
+echo - Swagger Docs:    http://localhost:8000/docs
 echo.
 echo Demo Credentials:
-echo   Administrator: admin / AdminPassword123!
-echo   Manager:       manager / ManagerPassword123!
-echo   Employee:      employee / EmployeePassword123!
+echo   Administrator: admin / Admin@123
+echo   Sales Manager: salesmgr / Manager@123
 echo ============================================================================
 echo.
 pause

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,148 +7,147 @@
 @layer base {
   * { box-sizing: border-box; }
   body {
-    @apply font-sans bg-slate-50 text-slate-800 antialiased;
+    @apply font-sans bg-slate-950 text-slate-100 antialiased;
+    min-height: 100vh;
   }
 }
 
 @layer components {
-  /* ── Buttons ─────────────────────────────────────────────────────────── */
+  /* Buttons */
   .btn {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm
            transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500
+    @apply btn bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-400
            shadow-sm hover:shadow-md active:scale-[0.98];
   }
   .btn-secondary {
-    @apply btn bg-white text-slate-700 border border-slate-200 hover:bg-slate-50
+    @apply btn bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700
            focus:ring-slate-400 shadow-sm;
   }
   .btn-danger {
-    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+    @apply btn bg-red-600 text-white hover:bg-red-500 focus:ring-red-400;
   }
   .btn-success {
-    @apply btn bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500;
+    @apply btn bg-emerald-600 text-white hover:bg-emerald-500 focus:ring-emerald-400;
   }
   .btn-ghost {
-    @apply btn bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-slate-400;
+    @apply btn bg-transparent text-slate-300 hover:bg-slate-800 focus:ring-slate-400;
   }
   .btn-sm { @apply btn text-xs px-3 py-1.5; }
 
-  /* ── Cards ────────────────────────────────────────────────────────────── */
+  /* Cards */
   .card {
-    @apply bg-white rounded-xl border border-slate-200 shadow-sm;
+    @apply bg-slate-900 rounded-xl border border-slate-800 shadow-sm;
   }
   .card-header {
-    @apply px-6 py-4 border-b border-slate-100 flex items-center justify-between;
+    @apply px-6 py-4 border-b border-slate-800 flex items-center justify-between;
   }
   .card-body { @apply p-6; }
 
-  /* ── Form ─────────────────────────────────────────────────────────────── */
+  /* Forms */
   .form-label {
-    @apply block text-sm font-medium text-slate-700 mb-1;
+    @apply block text-sm font-medium text-slate-300 mb-1;
   }
   .form-input {
-    @apply w-full px-3 py-2 rounded-lg border border-slate-300 text-sm text-slate-800
-           bg-white placeholder-slate-400
-           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+    @apply w-full px-3 py-2 rounded-lg border border-slate-700 text-sm text-slate-100
+           bg-slate-900 placeholder-slate-500
+           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
            transition-all duration-150;
   }
   .form-input-error {
-    @apply form-input border-red-400 focus:ring-red-400;
+    @apply form-input border-red-500 focus:ring-red-400;
   }
-  .form-error { @apply text-xs text-red-500 mt-1; }
+  .form-error { @apply text-xs text-red-400 mt-1; }
   .form-select { @apply form-input cursor-pointer; }
 
-  /* ── Badge ────────────────────────────────────────────────────────────── */
+  /* Badges */
   .badge {
     @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold;
   }
-  .badge-green  { @apply badge bg-emerald-100 text-emerald-700; }
-  .badge-red    { @apply badge bg-red-100 text-red-700; }
-  .badge-yellow { @apply badge bg-amber-100 text-amber-700; }
-  .badge-blue   { @apply badge bg-blue-100 text-blue-700; }
-  .badge-gray   { @apply badge bg-slate-100 text-slate-600; }
-  .badge-purple { @apply badge bg-purple-100 text-purple-700; }
+  .badge-green  { @apply badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30; }
+  .badge-red    { @apply badge bg-red-500/20 text-red-400 border border-red-500/30; }
+  .badge-yellow { @apply badge bg-amber-500/20 text-amber-400 border border-amber-500/30; }
+  .badge-blue   { @apply badge bg-blue-500/20 text-blue-400 border border-blue-500/30; }
+  .badge-gray   { @apply badge bg-slate-800 text-slate-400 border border-slate-700; }
+  .badge-purple { @apply badge bg-purple-500/20 text-purple-400 border border-purple-500/30; }
 
-  /* ── Table ────────────────────────────────────────────────────────────── */
+  /* Table */
   .data-table { @apply w-full text-sm; }
-  .data-table thead tr { @apply bg-slate-50 border-b border-slate-200; }
+  .data-table thead tr { @apply bg-slate-900 border-b border-slate-800; }
   .data-table th {
-    @apply px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider;
+    @apply px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider;
   }
-  .data-table td { @apply px-4 py-3 text-slate-700; }
+  .data-table td { @apply px-4 py-3 text-slate-200; }
   .data-table tbody tr {
-    @apply border-b border-slate-100 hover:bg-slate-50 transition-colors;
+    @apply border-b border-slate-800 hover:bg-slate-800/50 transition-colors;
   }
 
-  /* ── Modal ────────────────────────────────────────────────────────────── */
-  .modal-overlay {
-    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
-  }
-  .modal-box {
-    @apply bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto;
-  }
-  .modal-header {
-    @apply px-6 py-4 border-b border-slate-100 flex items-center justify-between;
-  }
-  .modal-body { @apply px-6 py-5; }
-  .modal-footer {
-    @apply px-6 py-4 border-t border-slate-100 flex justify-end gap-3;
-  }
-
-  /* ── Stat card ────────────────────────────────────────────────────────── */
-  .stat-card {
-    @apply card p-5 flex items-center gap-4;
-  }
-  .stat-icon {
-    @apply w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0;
-  }
-
-  /* ── Page header ──────────────────────────────────────────────────────── */
+  /* Page Header */
   .page-header {
     @apply flex items-center justify-between mb-6;
   }
-  .page-title { @apply text-2xl font-bold text-slate-800; }
-  .page-subtitle { @apply text-sm text-slate-500 mt-0.5; }
+  .page-title { @apply text-2xl font-bold text-white; }
+  .page-subtitle { @apply text-sm text-slate-400 mt-0.5; }
 }
 
-/* ── Scrollbar ────────────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-/* ── Animations ────────────────────────────────────────────────────────────── */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in { animation: fadeIn 0.2s ease-out; }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-.animate-spin-fast { animation: spin 0.6s linear infinite; }
-  body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
-  }
+/* Glassmorphism utilities */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Custom scrollbar for ERP tables and panels */
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: rgba(15, 23, 42, 0.6);
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(148, 163, 184, 0.6);
+}
+
+/* Print styling for invoice & quotation print view */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .printable-area {
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+    color: black !important;
+  }
 }

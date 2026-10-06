@@ -11,20 +11,35 @@ import {
   Package,
   FolderTree,
   Warehouse,
-  ArrowLeftRight,
   AlertTriangle,
   History,
-  TrendingDown
+  FileText,
+  CreditCard,
+  Receipt
 } from 'lucide-react';
 
 const mainNavigation = [
   { name: 'Dashboard', path: '/', icon: LayoutDashboard, role: 'All' },
   { 
+    name: 'Sales Management', 
+    path: '/sales', 
+    icon: ShoppingCart, 
+    highlight: true,
+    badge: 'Member 5',
+    children: [
+      { name: 'Sales Overview', path: '/sales', icon: LayoutDashboard, end: true },
+      { name: 'Quotations', path: '/sales/quotations', icon: FileText },
+      { name: 'Sales Orders', path: '/sales/orders', icon: ShoppingCart },
+      { name: 'Invoices', path: '/sales/invoices', icon: Receipt },
+      { name: 'Payments', path: '/sales/payments', icon: CreditCard },
+    ]
+  },
+  { 
     name: 'Inventory', 
     path: '/inventory', 
     icon: Boxes, 
     highlight: true,
-    badge: 'Active',
+    badge: 'Member 4',
     children: [
       { name: 'Overview', path: '/inventory', icon: LayoutDashboard, end: true },
       { name: 'Products', path: '/inventory/products', icon: Package },
@@ -35,9 +50,20 @@ const mainNavigation = [
       { name: 'Low Stock Alerts', path: '/inventory/low-stock', icon: AlertTriangle, alert: true },
     ]
   },
-  { name: 'HR Management', path: '/hr', icon: Users, badge: 'Upcoming' },
+  { 
+    name: 'HR Management', 
+    path: '/hr', 
+    icon: Users,
+    badge: 'Member 2',
+    children: [
+      { name: 'HR Overview', path: '/hr', icon: LayoutDashboard, end: true },
+      { name: 'Employees', path: '/hr/employees', icon: Users },
+      { name: 'Departments', path: '/hr/departments', icon: FolderTree },
+      { name: 'Attendance', path: '/hr/attendance', icon: History },
+      { name: 'Leaves', path: '/hr/leaves', icon: FileText },
+    ]
+  },
   { name: 'CRM', path: '/crm', icon: UserCheck, badge: 'Upcoming' },
-  { name: 'Sales', path: '/sales', icon: ShoppingCart, badge: 'Upcoming' },
   { name: 'Procurement', path: '/procurement', icon: Briefcase, badge: 'Upcoming' },
   { name: 'Reports', path: '/reports', icon: BarChart3, badge: 'Upcoming' },
 ];
@@ -50,7 +76,7 @@ export default function Sidebar() {
           SmartERP Platform
         </div>
         <div className="text-xs text-indigo-400 mt-0.5">
-          Role: Inventory & Operations
+          Unified Multi-Module Enterprise
         </div>
       </div>
 
@@ -132,11 +158,11 @@ export default function Sidebar() {
 
       <div className="p-4 border-t border-slate-800 bg-slate-950/40">
         <div className="text-[11px] text-slate-400">
-          Connected Database:
+          Connected System:
         </div>
         <div className="text-xs font-semibold text-emerald-400 flex items-center gap-1.5 mt-0.5">
           <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-          PostgreSQL / Active
+          SmartERP / Active
         </div>
       </div>
     </aside>

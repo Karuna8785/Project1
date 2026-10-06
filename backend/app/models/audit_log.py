@@ -10,9 +10,15 @@ class AuditLog(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    user_email = Column(String(255), nullable=True)
     action = Column(String(100), nullable=False, index=True)
-    description = Column(Text, nullable=True)
+    entity_type = Column(String(50), nullable=True)
+    entity_id = Column(String(100), nullable=True)
     ip_address = Column(String(50), nullable=True)
+    user_agent = Column(String(255), nullable=True)
+    details = Column(Text, nullable=True)
+    description = Column(Text, nullable=True)
     timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=True)
 
     user = relationship("User", foreign_keys=[user_id])

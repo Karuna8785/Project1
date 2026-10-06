@@ -1,34 +1,40 @@
-/**
- * SmartERP - Axios API Client
- * Member 1 will add JWT token injection when auth is integrated.
- */
-import axios from 'axios'
+import axios from 'axios';
+import { API_BASE_URL } from '../utils/constants';
 
 const api = axios.create({
-  baseURL: '/api/v1',
-  headers: { 'Content-Type': 'application/json' },
-})
+  baseURL: API_BASE_URL || '/api/v1',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-// ── Request interceptor (Member 1 adds token here) ──────────────────────────
-api.interceptors.request.use((config) => {
-  // Member 1 integration: read token from localStorage/context
-  const token = localStorage.getItem('access_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+// Interceptor to inject JWT token into requests
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('smarterp_token') || localStorage.getItem('access_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-// ── Response interceptor (global error handling) ────────────────────────────
+// Interceptor to handle global 401s
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Member 1: trigger logout / redirect to login
-      console.warn('Unauthorized — redirect to login')
+    if (error.response && error.response.status === 401) {
+      const isAuthEndpoint =
+        error.config.url?.includes('/auth/login') || error.config.url?.includes('/auth/register');
+      if (!isAuthEndpoint) {
+        localStorage.removeItem('smarterp_token');
+        localStorage.removeItem('smarterp_user');
+        localStorage.removeItem('access_token');
+      }
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
-export default api
+export default api;

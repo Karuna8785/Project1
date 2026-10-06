@@ -6,8 +6,8 @@ const NotificationContext = createContext(null);
 export function NotificationProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
 
-  const addNotification = useCallback(({ type = 'info', title, message, duration = 4000 }) => {
-    const id = Date.now() + Math.random().toString();
+  const addToast = useCallback((message, type = 'info', duration = 4000, title = '') => {
+    const id = Date.now() + Math.random().toString(36).substring(2, 9);
     setNotifications((prev) => [...prev, { id, type, title, message }]);
 
     if (duration > 0) {
@@ -22,68 +22,93 @@ export function NotificationProvider({ children }) {
   }, []);
 
   const notifySuccess = useCallback((message, title = 'Success') => {
-    addNotification({ type: 'success', title, message });
-  }, [addNotification]);
+    addToast(message, 'success', 4000, title);
+  }, [addToast]);
 
   const notifyError = useCallback((message, title = 'Error') => {
-    addNotification({ type: 'error', title, message: message || 'An unexpected error occurred' });
-  }, [addNotification]);
+    addToast(message || 'An error occurred', 'error', 5000, title);
+  }, [addToast]);
 
   const notifyWarning = useCallback((message, title = 'Warning') => {
-    addNotification({ type: 'warning', title, message });
-  }, [addNotification]);
+    addToast(message, 'warning', 4000, title);
+  }, [addToast]);
 
   const notifyInfo = useCallback((message, title = 'Information') => {
-    addNotification({ type: 'info', title, message });
-  }, [addNotification]);
+    addToast(message, 'info', 4000, title);
+  }, [addToast]);
+
+  const value = {
+    // Inventory module interface
+    notifySuccess,
+    notifyError,
+    notifyWarning,
+    notifyInfo,
+    addNotification: ({ message, type, title, duration }) => addToast(message, type, duration, title),
+    // Sales module interface
+    success: (msg) => notifySuccess(msg),
+    error: (msg) => notifyError(msg),
+    info: (msg) => notifyInfo(msg),
+    warning: (msg) => notifyWarning(msg),
+  };
 
   return (
-    <NotificationContext.Provider
-      value={{ notifySuccess, notifyError, notifyWarning, notifyInfo, addNotification }}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
       {/* Toast container */}
-      <div className="fixed top-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none max-w-sm w-full">
-        {notifications.map((n) => (
-          <div
-            key={n.id}
-            className={`pointer-events-auto flex items-start p-4 rounded-xl shadow-lg border backdrop-blur-md transition-all duration-300 animate-in fade-in slide-in-from-top-4 ${
-              n.type === 'success'
-                ? 'bg-emerald-50/95 border-emerald-200 text-emerald-900'
-                : n.type === 'error'
-                ? 'bg-rose-50/95 border-rose-200 text-rose-900'
-                : n.type === 'warning'
-                ? 'bg-amber-50/95 border-amber-200 text-amber-900'
-                : 'bg-indigo-50/95 border-indigo-200 text-indigo-900'
-            }`}
-          >
-            <div className="flex-shrink-0 mt-0.5 mr-3">
-              {n.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-600" />}
-              {n.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-600" />}
-              {n.type === 'warning' && <AlertTriangle className="w-5 h-5 text-amber-600" />}
-              {n.type === 'info' && <Info className="w-5 h-5 text-indigo-600" />}
-            </div>
-            <div className="flex-1 text-sm">
-              {n.title && <div className="font-semibold mb-0.5">{n.title}</div>}
-              <div>{n.message}</div>
-            </div>
-            <button
-              onClick={() => removeNotification(n.id)}
-              className="flex-shrink-0 ml-3 text-slate-400 hover:text-slate-700 transition"
+      <div className="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none max-w-sm w-full">
+        {notifications.map((n) => {
+          let bg = 'bg-slate-900/95 text-slate-100 border-slate-700 shadow-xl';
+          let icon = <Info className="w-5 h-5 text-indigo-400 shrink-0" />;
+
+          if (n.type === 'success') {
+            bg = 'bg-slate-900/95 text-emerald-100 border-emerald-500/40 shadow-emerald-500/10';
+            icon = <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />;
+          } else if (n.type === 'error') {
+            bg = 'bg-slate-900/95 text-rose-100 border-rose-500/40 shadow-rose-500/10';
+            icon = <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />;
+          } else if (n.type === 'warning') {
+            bg = 'bg-slate-900/95 text-amber-100 border-amber-500/40 shadow-amber-500/10';
+            icon = <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />;
+          }
+
+          return (
+            <div
+              key={n.id}
+              className={`pointer-events-auto flex items-start justify-between p-4 rounded-xl border backdrop-blur-md shadow-xl transition-all duration-300 animate-in slide-in-from-right ${bg}`}
             >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        ))}
+              <div className="flex items-start space-x-3">
+                <div className="mt-0.5">{icon}</div>
+                <div>
+                  {n.title && <div className="text-xs font-semibold uppercase tracking-wider mb-0.5">{n.title}</div>}
+                  <div className="text-sm font-medium">{n.message}</div>
+                </div>
+              </div>
+              <button
+                onClick={() => removeNotification(n.id)}
+                className="ml-3 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </NotificationContext.Provider>
   );
 }
 
-export function useNotification() {
-  const ctx = useContext(NotificationContext);
-  if (!ctx) {
-    throw new Error('useNotification must be used within a NotificationProvider');
+export const useNotify = () => {
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error('useNotify must be used within NotificationProvider');
   }
-  return ctx;
-}
+  return context;
+};
+
+export const useNotification = () => {
+  const context = useContext(NotificationContext);
+  if (!context) {
+    throw new Error('useNotification must be used within NotificationProvider');
+  }
+  return context;
+};

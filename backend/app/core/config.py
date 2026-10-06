@@ -1,38 +1,51 @@
 """
 SmartERP Backend - Application Configuration
-Member 2: HR Management Module
+Unified Enterprise Platform Configuration
 """
-from pydantic_settings import BaseSettings
 from typing import List
+from pydantic_settings import BaseSettings
+import os
 
 
 class Settings(BaseSettings):
-    # App
+    PROJECT_NAME: str = "SmartERP"
     APP_NAME: str = "SmartERP"
+    VERSION: str = "1.0.0"
     APP_VERSION: str = "1.0.0"
+    API_V1_STR: str = "/api/v1"
     DEBUG: bool = True
 
-    # Database
-    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/smarterp"
-
-    # JWT (Provided by Member 1 - Auth Module)
-    SECRET_KEY: str = "dev-secret-key-change-in-production"
+    # Security / JWT
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "smarterp-super-secret-key-change-in-production-2026-secure-jwt")
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+
+    # Database: SQLite default for local zero-config, PostgreSQL in production
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./smarterp.db")
 
     # CORS
-    ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+    ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000"
+    BACKEND_CORS_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
 
-    # HR Module
+    # Module Flags
     HR_MODULE_ENABLED: bool = True
+    SALES_MODULE_ENABLED: bool = True
+    INVENTORY_MODULE_ENABLED: bool = True
 
     @property
     def allowed_origins_list(self) -> List[str]:
         return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",")]
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = {
+        "case_sensitive": True,
+        "env_file": ".env",
+        "extra": "ignore",
+    }
 
 
 settings = Settings()
