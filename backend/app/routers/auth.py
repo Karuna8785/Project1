@@ -85,7 +85,7 @@ def seed_default_roles_and_admin(db: Session):
     admin_user = db.query(User).filter(User.username == "admin").first()
     if not admin_user:
         admin_user = User(
-            email="admin@smarterp.local",
+            email="admin@smarterp.com",
             username="admin",
             full_name="System Administrator",
             hashed_password=get_password_hash("Admin@123"),
@@ -94,12 +94,14 @@ def seed_default_roles_and_admin(db: Session):
             roles=[admin_role]
         )
         db.add(admin_user)
+    elif admin_user.email.endswith(".local"):
+        admin_user.email = "admin@smarterp.com"
 
     # Manager user
     inv_user = db.query(User).filter(User.username == "inventory_manager").first()
     if not inv_user:
         inv_user = User(
-            email="inventory@smarterp.local",
+            email="inventory@smarterp.com",
             username="inventory_manager",
             full_name="Inventory Manager",
             hashed_password=get_password_hash("Inventory@123"),
@@ -108,6 +110,8 @@ def seed_default_roles_and_admin(db: Session):
             roles=[manager_role]
         )
         db.add(inv_user)
+    elif inv_user.email.endswith(".local"):
+        inv_user.email = "inventory@smarterp.com"
 
     db.commit()
 

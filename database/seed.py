@@ -98,7 +98,7 @@ def seed_database():
         if not admin_user:
             admin_pwd = os.getenv("DEFAULT_ADMIN_PASSWORD", "Admin@123")
             admin_user = User(
-                email="admin@smarterp.local",
+                email="admin@smarterp.com",
                 username="admin",
                 full_name="System Administrator",
                 hashed_password=get_password_hash(admin_pwd),
@@ -117,12 +117,14 @@ def seed_database():
                 ip_address="127.0.0.1"
             )
             db.add(audit)
+        elif admin_user.email.endswith(".local"):
+            admin_user.email = "admin@smarterp.com"
 
         # Inventory Manager user
         inv_user = db.query(User).filter(User.username == "inventory_manager").first()
         if not inv_user:
             inv_user = User(
-                email="inventory@smarterp.local",
+                email="inventory@smarterp.com",
                 username="inventory_manager",
                 full_name="Marcus Vance",
                 hashed_password=get_password_hash("Inventory@123"),
@@ -132,6 +134,8 @@ def seed_database():
             )
             db.add(inv_user)
             db.flush()
+        elif inv_user.email.endswith(".local"):
+            inv_user.email = "inventory@smarterp.com"
 
         print("Seeding sample inventory categories...")
         categories_sample = [
@@ -151,9 +155,9 @@ def seed_database():
 
         print("Seeding sample warehouses...")
         warehouses_sample = [
-            ("WH-MAIN", "Central Distribution Center", "Primary enterprise logistics and receiving center", "100 Logistics Blvd", "Chicago", "IL", "60601", "David Sterling", "+1-312-555-0100", "dsterling@smarterp.local"),
-            ("WH-EAST", "East Coast Depot", "Regional fulfillment warehouse for Eastern region", "45 Harbor Road", "Boston", "MA", "02108", "Elena Rostova", "+1-617-555-0144", "erostova@smarterp.local"),
-            ("WH-WEST", "West Regional Hub", "High-capacity storage and distribution facility", "88 Pacific Coast Hwy", "Los Angeles", "CA", "90001", "Carlos Mendez", "+1-213-555-0188", "cmendez@smarterp.local"),
+            ("WH-MAIN", "Central Distribution Center", "Primary enterprise logistics and receiving center", "100 Logistics Blvd", "Chicago", "IL", "60601", "David Sterling", "+1-312-555-0100", "dsterling@smarterp.com"),
+            ("WH-EAST", "East Coast Depot", "Regional fulfillment warehouse for Eastern region", "45 Harbor Road", "Boston", "MA", "02108", "Elena Rostova", "+1-617-555-0144", "erostova@smarterp.com"),
+            ("WH-WEST", "West Regional Hub", "High-capacity storage and distribution facility", "88 Pacific Coast Hwy", "Los Angeles", "CA", "90001", "Carlos Mendez", "+1-213-555-0188", "cmendez@smarterp.com"),
         ]
         wh_map = {}
         for code, name, desc, addr, city, state, zip_c, contact, phone, email in warehouses_sample:

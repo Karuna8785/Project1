@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 class PermissionResponse(BaseModel):
     id: int
@@ -19,7 +19,7 @@ class RoleResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class UserBase(BaseModel):
-    email: EmailStr
+    email: str
     username: str
     full_name: str
     is_active: bool = True
@@ -27,6 +27,14 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     roles: Optional[List[str]] = []
+
+    @field_validator("email")
+    @classmethod
+    def validate_email_format(cls, v: str) -> str:
+        v = v.strip().lower()
+        if "@" not in v or "." not in v.split("@")[-1]:
+            raise ValueError("Invalid email format")
+        return v
 
 class UserResponse(UserBase):
     id: int

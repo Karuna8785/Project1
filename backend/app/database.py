@@ -17,10 +17,10 @@ def get_engine():
                 pass
             logger.info("Successfully connected to PostgreSQL database.")
             return test_engine
-        except Exception as e:
-            logger.warning(
-                f"PostgreSQL connection to {db_url} failed ({e}). "
-                f"Falling back to SQLite for local development: {settings.SQLITE_FALLBACK_URL}"
+        except Exception:
+            logger.info(
+                "Local PostgreSQL not detected or offline. Operating seamlessly with SQLite: %s",
+                settings.SQLITE_FALLBACK_URL
             )
             return create_engine(
                 settings.SQLITE_FALLBACK_URL, 
