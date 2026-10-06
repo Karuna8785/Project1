@@ -1,23 +1,67 @@
 @echo off
-echo ========================================
-echo  SmartERP - Member 2: HR Management
-echo ========================================
-echo.
+echo ========================================================
+echo Starting SmartERP (FastAPI Backend + Vite/React Frontend)
+echo ========================================================
 
-echo [1/2] Starting FastAPI backend...
-start "SmartERP Backend" powershell -NoExit -Command ^
-  "cd '%~dp0backend'; if (-not (Test-Path .venv)) { python -m venv .venv }; .\.venv\Scripts\Activate.ps1; pip install -r requirements.txt -q; uvicorn app.main:app --reload --port 8000"
+:: 1. Launch FastAPI Backend in a new window
+echo Starting FastAPI Backend on http://localhost:8000 ...
+start "SmartERP Backend" powershell -NoExit -Command "cd backend; python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
 
-timeout /t 3 /nobreak >nul
-
-echo [2/2] Starting React frontend...
-start "SmartERP Frontend" powershell -NoExit -Command ^
-  "cd '%~dp0frontend'; npm install; npm run dev"
+:: 2. Launch Vite Frontend in a new window
+echo Starting React Vite Frontend on http://localhost:5173 ...
+start "SmartERP Frontend" powershell -NoExit -Command "cd frontend; npm run dev"
 
 echo.
-echo ========================================
-echo  Backend:  http://localhost:8000
-echo  Frontend: http://localhost:5173
-echo  Swagger:  http://localhost:8000/docs
-echo ========================================
+echo ========================================================
+echo SmartERP services are starting!
+echo Frontend: http://localhost:5173
+echo Backend:  http://localhost:8000
+echo Swagger:  http://localhost:8000/docs
+echo ========================================================
+title SmartERP Launcher - Procurement & Finance
+cls
+echo ===============================================================================
+echo                     SMARTERP ENTERPRISE PLATFORM
+echo          Procurement & Finance Management (Suppliers, POs, Expenses, AP)
+echo ===============================================================================
+echo.
+echo [1/3] Checking environment...
+
+cd /d "%~dp0"
+
+if not exist "backend\.venv\Scripts\python.exe" (
+    echo [ERROR] Python virtual environment not found in backend\.venv
+    echo Please create it using: cd backend ^& python -m venv .venv ^& .\.venv\Scripts\pip install -r requirements.txt
+    pause
+    exit /b 1
+)
+
+if not exist "frontend\node_modules" (
+    echo [ERROR] Frontend node_modules not found.
+    echo Please run: cd frontend ^& npm install
+    pause
+    exit /b 1
+)
+
+echo [2/3] Launching FastAPI Backend on http://localhost:8000 ...
+start "SmartERP Backend (FastAPI)" powershell -NoExit -Command "cd '%~dp0backend'; .\.venv\Scripts\activate; uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload"
+
+echo [3/3] Launching React Vite Frontend on http://localhost:5173 ...
+start "SmartERP Frontend (Vite)" powershell -NoExit -Command "cd '%~dp0frontend'; npm.cmd run dev"
+
+echo.
+echo ===============================================================================
+echo SmartERP services are starting up!
+echo.
+echo   - Frontend Portal:    http://localhost:5173
+echo   - Backend API:        http://localhost:8000
+echo   - Swagger API Docs:   http://localhost:8000/docs
+echo   - ReDoc API Docs:     http://localhost:8000/redoc
+echo.
+echo Pre-configured Test Accounts:
+echo   - Admin User:         admin / Admin@123
+echo   - Procurement Lead:   sarah.procure / Procure@123
+echo   - Finance Controller: david.finance / Finance@123
+echo ===============================================================================
+echo.
 pause

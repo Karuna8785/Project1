@@ -1,40 +1,73 @@
 # Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-.Python
-*.egg
-*.egg-info/
-dist/
-build/
+*$py.class
 *.so
-
-# Virtual environment
-.venv/
-venv/
+.Python
 env/
-
-# Environment variables
-.env
-!.env.example
-
-# Database
-*.db
-*.sqlite3
-test_hr.db
-
-# Coverage
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
 .coverage
 htmlcov/
-.pytest_cache/
+*.db
+*.sqlite3
 
 # Node / Frontend
 node_modules/
 dist/
-.vite/
+dist-ssr/
+*.local
+.npm
+.eslintcache
 
-# IDE
+# Environment & IDE
+.env
+.env.local
+.venv/
+env/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Databases & local stores
+*.db
+*.sqlite
+*.sqlite3
+smarterp.db
+
+# Environment variables
+.env
+backend/.env
+backend/.env.local
+
+# IDE & OS
 .vscode/
 .idea/
 *.swp
@@ -43,6 +76,3 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
