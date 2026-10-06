@@ -11,6 +11,7 @@ user_roles = Table(
     Base.metadata,
     Column("user_id", Integer, ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
     Column("role_id", Integer, ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True),
+    Column("created_at", DateTime, default=lambda: datetime.now(timezone.utc)),
 )
 
 role_permissions = Table(
@@ -18,6 +19,7 @@ role_permissions = Table(
     Base.metadata,
     Column("role_id", Integer, ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True),
     Column("permission_id", Integer, ForeignKey("permissions.id", ondelete="CASCADE"), primary_key=True),
+    Column("created_at", DateTime, default=lambda: datetime.now(timezone.utc)),
 )
 
 

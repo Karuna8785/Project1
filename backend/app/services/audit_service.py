@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
@@ -12,11 +13,15 @@ def log_audit_event(
     ip_address: Optional[str] = None,
 ) -> AuditLog:
     """Record an audit trail event for security and compliance."""
+    now = datetime.now(timezone.utc)
     log = AuditLog(
         user_id=user_id,
         action=action,
         description=details,
+        details=details,
         ip_address=ip_address,
+        timestamp=now,
+        created_at=now,
     )
     db.add(log)
     db.commit()

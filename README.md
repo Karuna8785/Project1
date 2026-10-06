@@ -1,8 +1,6 @@
 # SmartERP — Enterprise Resource Planning System
 
-SmartERP is a modular, high-performance Enterprise Resource Planning (ERP) platform designed for commercial excellence, security, inventory tracking, HR management, and seamless cross-module workflows.
-
----
+SmartERP is a modular, high-performance Enterprise Resource Planning (ERP) platform designed for commercial excellence, security, CRM, inventory tracking, HR management, and seamless cross-module workflows.
 
 ## 1. Team Module Allocation & Status
 
@@ -10,7 +8,7 @@ SmartERP is a modular, high-performance Enterprise Resource Planning (ERP) platf
 |---|---|---|---|
 | **Authentication & Security** | Member 1 | Login, Register, JWT, Roles (`ADMIN`, `MANAGER`, `EMPLOYEE`), RBAC, Security Audit Logs | ✅ **Active** |
 | **HR Management** | Member 2 | Employees, Departments, Attendance Tracking, Leave Approvals | ✅ **Active** |
-| **CRM** | Member 3 | Customers, Leads, Interaction History, Pipelines | 📋 Planned |
+| **CRM** | Member 3 | Customers, Leads, Interaction History, Pipelines | ✅ **Active** |
 | **Inventory Management** | Member 4 | Products, Categories, Multi-Warehouse Stock, Movements, Low Stock Alerts | ✅ **Active** |
 | **Sales Management** | **Member 5** | **Quotations, Sales Orders, Commercial Invoices, Payment Collections, Pipeline Analytics, Voucher/Invoice Printing** | ✅ **Active** |
 | **Procurement & Finance** | Member 6 | Suppliers, Purchase Orders, Line Items, Expenses, General Ledger | 📋 Planned |
@@ -100,5 +98,9 @@ npm run dev
 
 Run automated pytest suites:
 ```powershell
+# Sales module tests
 .\backend\.venv\Scripts\python -m pytest -v tests/
+
+# Cross-module (Auth, HR, Inventory, CRM) tests
+.\backend\.venv\Scripts\python -m pytest -v backend/tests/
 ```
