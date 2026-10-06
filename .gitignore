@@ -1,6 +1,40 @@
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+*.so
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+!.env.example
+
+# Database
+*.db
+*.sqlite3
+test_hr.db
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Node / Frontend
+node_modules/
+dist/
+.vite/
+
+# IDE
 *$py.class
 *.so
 .Python
@@ -46,3 +80,5 @@ htmlcov/
 
 # Archives
 *.zip
+# Logs
+*.log
