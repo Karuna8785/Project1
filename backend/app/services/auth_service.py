@@ -63,7 +63,7 @@ def authenticate_user(
 
     log_audit_event(
         db=db,
-        action="LOGIN_SUCCESS",
+        action="LOGIN",
         user_id=user.id,
         details=f"User {user.username} logged in successfully",
         ip_address=ip_address
@@ -77,7 +77,7 @@ def register_user(
     ip_address: Optional[str] = None
 ) -> User:
     """Register a new user with validation, hashing, and role assignment."""
-    if user_in.password != user_in.confirm_password:
+    if user_in.confirm_password and user_in.password != user_in.confirm_password:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Password and confirmation password do not match",
@@ -87,14 +87,14 @@ def register_user(
     if db.query(User).filter(User.username == user_in.username).first():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Username '{user_in.username}' is already registered",
+            detail=f"Username '{user_in.username}' already exists",
         )
         
     # Check duplicate email
     if db.query(User).filter(User.email == user_in.email.lower()).first():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Email '{user_in.email}' is already registered",
+            detail=f"Email '{user_in.email}' already exists",
         )
 
     # Resolve Role

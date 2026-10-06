@@ -5,8 +5,12 @@ export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('smarterp_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('smarterp_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
   });
   const [token, setToken] = useState(() => localStorage.getItem('smarterp_token'));
   const [loading, setLoading] = useState(true);
@@ -72,3 +76,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export default AuthContext;

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_BASE_URL } from '../utils/constants';
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL || '/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -11,7 +11,7 @@ const api = axios.create({
 // Interceptor to inject JWT token into requests
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('smarterp_token');
+    const token = localStorage.getItem('smarterp_token') || localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -25,11 +25,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      const isAuthEndpoint = error.config.url.includes('/auth/login') || error.config.url.includes('/auth/register');
+      const isAuthEndpoint =
+        error.config.url?.includes('/auth/login') || error.config.url?.includes('/auth/register');
       if (!isAuthEndpoint) {
         localStorage.removeItem('smarterp_token');
         localStorage.removeItem('smarterp_user');
-        window.location.href = '/login';
+        localStorage.removeItem('access_token');
       }
     }
     return Promise.reject(error);

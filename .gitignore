@@ -6,10 +6,14 @@ backend/.env
 backend/.env.local
 frontend/.env.local
 frontend/.env.*.local
+!.env.example
+!backend/.env.example
 
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 *$py.class
 *.so
 .Python
@@ -42,12 +46,15 @@ htmlcov/
 *.sqlite
 *.sqlite3
 smarterp.db
+test_hr.db
 
 # Node / Frontend
 node_modules/
 frontend/node_modules/
 dist/
+dist-ssr/
 frontend/dist/
+.vite/
 .npm
 .eslintcache
 frontend/npm-debug.log*
@@ -61,3 +68,6 @@ frontend/yarn-error.log*
 *.swo
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log

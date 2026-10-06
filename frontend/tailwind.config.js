@@ -20,6 +20,18 @@ export default {
           900: '#312e81',
           950: '#1e1b4b',
         },
+        primary: {
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          500: '#6366f1',
+          600: '#4f46e5',
+          700: '#4338ca',
+        },
+        sidebar: '#0f172a',
+        'sidebar-hover': '#1e293b',
+      },
+      fontFamily: {
+        sans: ['Inter', 'Plus Jakarta Sans', 'sans-serif'],
       },
     },
   },

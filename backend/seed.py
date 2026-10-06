@@ -1,13 +1,26 @@
 """
-Standalone database seeder for SmartERP - Member 5 (Sales Module).
-Populates users, customers, catalog products, quotations, orders, invoices, and payments.
+SmartERP - Unified Enterprise Database Seeder
+Seeds Users, Roles, HR Data, Inventory Catalog, and Sales Pipeline data.
+Run: python seed.py
 """
-from datetime import datetime, timezone, timedelta
+import sys
+import os
+from datetime import datetime, timezone, timedelta, date, time
+
+sys.path.insert(0, os.path.dirname(__file__))
+
 from app.database.session import SessionLocal, engine, Base
 import app.database.base
+
+# Models
 from app.models.user import User, Role, Permission
-from app.models.customer import Customer
+from app.models.department import Department
+from app.models.employee import Employee, EmployeeStatus, Gender
+from app.models.attendance import Attendance, AttendanceStatus
+from app.models.leave import Leave, LeaveType, LeaveStatus
+from app.models.category import Category
 from app.models.product import Product
+from app.models.customer import Customer
 from app.models.quotation import Quotation, QuotationItem
 from app.models.sales_order import SalesOrder, SalesOrderItem
 from app.models.invoice import Invoice, InvoiceItem
@@ -25,8 +38,8 @@ def seed_database():
         admin_role = db.query(Role).filter(Role.name == "ADMIN").first()
         if not admin_role:
             admin_role = Role(name="ADMIN", description="System Administrator")
-            mgr_role = Role(name="MANAGER", description="Sales Manager")
-            emp_role = Role(name="EMPLOYEE", description="Sales Executive")
+            mgr_role = Role(name="MANAGER", description="Sales & Operations Manager")
+            emp_role = Role(name="EMPLOYEE", description="Staff / Sales Executive")
             db.add_all([admin_role, mgr_role, emp_role])
             db.commit()
             db.refresh(admin_role)
@@ -58,6 +71,27 @@ def seed_database():
             db.refresh(admin)
             print("Created default admin: admin / Admin@123")
 
+        # HR Departments
+        dept_data = [
+            {"name": "Human Resources", "code": "HR", "description": "HR & People Operations"},
+            {"name": "Engineering", "code": "ENG", "description": "Software Development"},
+            {"name": "Finance", "code": "FIN", "description": "Finance & Accounting"},
+            {"name": "Marketing", "code": "MKT", "description": "Marketing & Growth"},
+            {"name": "Sales", "code": "SLS", "description": "Sales & Revenue"},
+            {"name": "Operations", "code": "OPS", "description": "Business Operations"},
+        ]
+        depts = {}
+        for d in dept_data:
+            existing = db.query(Department).filter(Department.name == d["name"]).first()
+            if not existing:
+                dept = Department(name=d["name"], description=d["description"])
+                db.add(dept)
+                db.flush()
+                depts[d["code"]] = dept
+            else:
+                depts[d["code"]] = existing
+        db.commit()
+
         # Customers
         c1 = db.query(Customer).filter(Customer.name == "Apex Global Technologies").first()
         if not c1:
@@ -84,35 +118,43 @@ def seed_database():
             db.refresh(c1)
             db.refresh(c2)
 
+        # Categories
+        cat = db.query(Category).first()
+        if not cat:
+            cat = Category(category_code="CAT-GEN", category_name="General Hardware & Software", description="General IT and ERP items")
+            db.add(cat)
+            db.commit()
+            db.refresh(cat)
+
         # Products
         p1 = db.query(Product).filter(Product.sku == "PROD-ERP-CORE").first()
         if not p1:
             p1 = Product(
+                product_code="PRD-ERP-CORE",
                 sku="PROD-ERP-CORE",
-                name="SmartERP Cloud Subscription (1 Year)",
-                category="Software",
+                product_name="SmartERP Cloud Subscription (1 Year)",
+                category_id=cat.id,
                 unit="License",
-                unit_price=120000.0,
+                selling_price=120000.0,
                 cost_price=30000.0,
-                tax_rate=18.0,
-                stock_quantity=999,
+                tax_percentage=18.0,
             )
             p2 = Product(
+                product_code="PRD-SRV-RACK",
                 sku="PROD-SRV-RACK",
-                name="Enterprise Rack Server X4",
-                category="Hardware",
+                product_name="Enterprise Rack Server X4",
+                category_id=cat.id,
                 unit="Units",
-                unit_price=245000.0,
+                selling_price=245000.0,
                 cost_price=180000.0,
-                tax_rate=18.0,
-                stock_quantity=25,
+                tax_percentage=18.0,
             )
             db.add_all([p1, p2])
             db.commit()
             db.refresh(p1)
             db.refresh(p2)
 
-        # Quotation
+        # Quotations, Sales Orders, Invoices
         if db.query(Quotation).count() == 0:
             q = Quotation(
                 quote_number="QT-2026-0001",
@@ -153,7 +195,6 @@ def seed_database():
             db.commit()
             db.refresh(q)
 
-            # Sales Order
             so = SalesOrder(
                 order_number="SO-2026-0001",
                 quotation_id=q.id,
@@ -181,24 +222,13 @@ def seed_database():
                 tax_rate=18.0,
                 total_amount=141600.0,
             )
-            soi2 = SalesOrderItem(
-                product_id=p2.id,
-                product_name=p2.name,
-                quantity=1.0,
-                unit_price=245000.0,
-                discount_percent=6.12,
-                tax_rate=18.0,
-                total_amount=271400.0,
-            )
-            so.items.extend([soi1, soi2])
+            so.items.append(soi1)
             db.add(so)
             db.commit()
             db.refresh(so)
-
             q.sales_order_id = so.id
             db.commit()
 
-            # Invoice
             inv = Invoice(
                 invoice_number="INV-2026-0001",
                 sales_order_id=so.id,
@@ -227,24 +257,13 @@ def seed_database():
                 tax_rate=18.0,
                 total_amount=141600.0,
             )
-            ii2 = InvoiceItem(
-                product_id=p2.id,
-                product_name=p2.name,
-                quantity=1.0,
-                unit_price=245000.0,
-                discount_percent=6.12,
-                tax_rate=18.0,
-                total_amount=271400.0,
-            )
-            inv.items.extend([ii1, ii2])
+            inv.items.append(ii1)
             db.add(inv)
             db.commit()
             db.refresh(inv)
-
             so.invoice_id = inv.id
             db.commit()
 
-            # Payment
             pay = Payment(
                 payment_number="PAY-2026-0001",
                 invoice_id=inv.id,
@@ -263,7 +282,6 @@ def seed_database():
             print("Seeded sample Quotation, Order, Invoice, and Payment!")
 
         print("Database seeding completed successfully.")
-
     except Exception as e:
         print(f"Error during seeding: {e}")
         db.rollback()

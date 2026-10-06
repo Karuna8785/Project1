@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 
-export const Modal = ({ isOpen, onClose, title, subtitle, children, size = 'max-w-3xl' }) => {
+export const Modal = ({ isOpen, onClose, title, subtitle, children, size, maxWidth }) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) onClose();
@@ -11,6 +11,8 @@ export const Modal = ({ isOpen, onClose, title, subtitle, children, size = 'max-
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+
+  const finalWidth = size || maxWidth || 'max-w-2xl';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
@@ -22,7 +24,7 @@ export const Modal = ({ isOpen, onClose, title, subtitle, children, size = 'max-
 
       {/* Dialog Window */}
       <div
-        className={`relative w-full ${size} bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden z-10 my-8`}
+        className={`relative w-full ${finalWidth} bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden z-10 my-8`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/50">
@@ -46,3 +48,5 @@ export const Modal = ({ isOpen, onClose, title, subtitle, children, size = 'max-
     </div>
   );
 };
+
+export default Modal;

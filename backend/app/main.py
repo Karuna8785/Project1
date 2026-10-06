@@ -5,46 +5,42 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.database.session import engine, Base, SessionLocal
 import app.database.base  # ensure all models are registered
-from app.api.routes import auth, sales, master, users, hr, crm, inventory, procurement, finance, reports
+
+# Route imports
+from app.api.routes import auth, sales, master, users, hr, crm, inventory as inventory_stub, procurement, finance, reports
+from app.api.routes import departments, employees, attendance, leaves
+from app.routers import categories, products, warehouses, inventory
+from app.routers.auth import seed_default_roles_and_admin
+
+# Models for sample seeding
 from app.models.user import User, Role, Permission
 from app.models.customer import Customer
 from app.models.product import Product
+from app.models.category import Category
 from app.core.security import get_password_hash
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("SmartERP")
 
 
-def seed_initial_data():
-    """Seed initial roles, permissions, admin user, sample customers and products if DB is fresh."""
-    db = SessionLocal()
+def seed_initial_data(db=None):
+    """Seed initial demo users, customers, and products if DB is fresh."""
+    close_db = False
+    if db is None:
+        db = SessionLocal()
+        close_db = True
     try:
-        # 1. Create Roles
+        # Roles
         admin_role = db.query(Role).filter(Role.name == "ADMIN").first()
         if not admin_role:
-            admin_role = Role(name="ADMIN", description="System Administrator with full system control")
-            manager_role = Role(name="MANAGER", description="Sales & Operations Manager")
-            employee_role = Role(name="EMPLOYEE", description="Sales Executive / Staff")
-            db.add_all([admin_role, manager_role, employee_role])
+            admin_role = Role(name="ADMIN", description="System Administrator")
+            mgr_role = Role(name="MANAGER", description="Sales & Operations Manager")
+            emp_role = Role(name="EMPLOYEE", description="Staff / Sales Executive")
+            db.add_all([admin_role, mgr_role, emp_role])
             db.commit()
             db.refresh(admin_role)
 
-            # 2. Create Permissions
-            perm_codes = [
-                ("AUTH_LOGIN", "Login to system"),
-                ("AUTH_REGISTER", "Register new users"),
-                ("SALES_VIEW", "View sales records"),
-                ("SALES_CREATE", "Create quotations and sales orders"),
-                ("SALES_INVOICE", "Issue invoices and collect payments"),
-                ("SALES_ADMIN", "Full sales administration"),
-            ]
-            for code, desc in perm_codes:
-                p = Permission(code=code, description=desc)
-                db.add(p)
-                admin_role.permissions.append(p)
-            db.commit()
-
-        # 3. Create Default Admin User
+        # Default Admin
         admin_user = db.query(User).filter(User.username == "admin").first()
         if not admin_user:
             admin_user = User(
@@ -58,9 +54,8 @@ def seed_initial_data():
             admin_user.roles.append(admin_role)
             db.add(admin_user)
             db.commit()
-            logger.info("Created default admin user: admin / Admin@123")
 
-        # 4. Create Demo Sales Rep / Manager
+        # Sales Manager
         manager_user = db.query(User).filter(User.username == "salesmgr").first()
         if not manager_user:
             mgr_role = db.query(Role).filter(Role.name == "MANAGER").first()
@@ -77,7 +72,15 @@ def seed_initial_data():
             db.add(manager_user)
             db.commit()
 
-        # 5. Create Sample Customers if none
+        # Sample Category
+        gen_cat = db.query(Category).first()
+        if not gen_cat:
+            gen_cat = Category(category_code="CAT-GEN", category_name="General Hardware & Software", description="General IT and ERP items")
+            db.add(gen_cat)
+            db.commit()
+            db.refresh(gen_cat)
+
+        # Sample Customers
         if db.query(Customer).count() == 0:
             customers = [
                 Customer(
@@ -111,120 +114,152 @@ def seed_initial_data():
             db.add_all(customers)
             db.commit()
 
-        # 6. Create Sample Products if none
+        # Sample Products
         if db.query(Product).count() == 0:
-            products = [
+            products_list = [
                 Product(
+                    product_code="PRD-ERP-CORE",
                     sku="PROD-ERP-CORE",
-                    name="SmartERP Cloud Subscription (1 Year)",
+                    product_name="SmartERP Cloud Subscription (1 Year)",
                     description="Full ERP platform access for up to 25 users with priority support",
-                    category="Software",
+                    category_id=gen_cat.id,
                     unit="License",
-                    unit_price=120000.0,
+                    selling_price=120000.0,
                     cost_price=30000.0,
-                    tax_rate=18.0,
-                    stock_quantity=999,
+                    tax_percentage=18.0,
+                    reorder_level=10,
                 ),
                 Product(
+                    product_code="PRD-SRV-RACK",
                     sku="PROD-SRV-RACK",
-                    name="Enterprise Rack Server X4",
+                    product_name="Enterprise Rack Server X4",
                     description="Dual Xeon Gold, 128GB ECC RAM, 4TB NVMe SSD",
-                    category="Hardware",
+                    category_id=gen_cat.id,
                     unit="Units",
-                    unit_price=245000.0,
+                    selling_price=245000.0,
                     cost_price=180000.0,
-                    tax_rate=18.0,
-                    stock_quantity=25,
+                    tax_percentage=18.0,
+                    reorder_level=5,
                 ),
                 Product(
+                    product_code="PRD-CNS-IMPL",
                     sku="PROD-CNS-IMPL",
-                    name="ERP On-Premises Implementation Services",
+                    product_name="ERP On-Premises Implementation Services",
                     description="Professional deployment, migration, workflow customization and staff onboarding",
-                    category="Services",
+                    category_id=gen_cat.id,
                     unit="Hours",
-                    unit_price=4500.0,
+                    selling_price=4500.0,
                     cost_price=2000.0,
-                    tax_rate=18.0,
-                    stock_quantity=500,
+                    tax_percentage=18.0,
+                    reorder_level=20,
                 ),
                 Product(
+                    product_code="PRD-IOT-SCAN",
                     sku="PROD-IOT-SCAN",
-                    name="Industrial Barcode & RFID Scanner",
+                    product_name="Industrial Barcode & RFID Scanner",
                     description="Rugged handheld 2D imager with Bluetooth 5.2 and IP65 protection",
-                    category="Hardware",
+                    category_id=gen_cat.id,
                     unit="Pcs",
-                    unit_price=18500.0,
+                    selling_price=18500.0,
                     cost_price=11000.0,
-                    tax_rate=18.0,
-                    stock_quantity=80,
+                    tax_percentage=18.0,
+                    reorder_level=15,
                 ),
             ]
-            db.add_all(products)
+            db.add_all(products_list)
             db.commit()
 
     except Exception as e:
-        logger.error(f"Error seeding database: {e}")
+        logger.error(f"Error in seed_initial_data: {e}")
         db.rollback()
     finally:
-        db.close()
+        if close_db:
+            db.close()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create tables if not exist
+    # Initialize database tables
     Base.metadata.create_all(bind=engine)
-    # Seed initial data
-    seed_initial_data()
+    # Run seed scripts
+    try:
+        with SessionLocal() as db:
+            seed_default_roles_and_admin(db)
+            seed_initial_data(db)
+    except Exception as e:
+        logger.warning(f"Initial seed warning: {e}")
     yield
 
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="SmartERP - Enterprise Resource Planning API. Member 5: Sales (Quotations, Orders, Invoices, Payments).",
+    description="SmartERP - Enterprise Resource Planning API with Authentication, HR, Inventory, and Sales modules.",
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
+    openapi_url="/api/openapi.json",
 )
 
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all during development for smooth local testing
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include Routers under /api/v1
+# API v1 Prefix
 api_v1_prefix = settings.API_V1_STR
+
+# Authentication & Security
 app.include_router(auth.router, prefix=api_v1_prefix)
-app.include_router(sales.router, prefix=api_v1_prefix)
-app.include_router(master.router, prefix=api_v1_prefix)
 app.include_router(users.router, prefix=api_v1_prefix)
 
-# Future Module placeholders for architectural completeness
-app.include_router(hr.router, prefix=api_v1_prefix)
-app.include_router(crm.router, prefix=api_v1_prefix)
+# Sales Module (Member 5)
+app.include_router(sales.router, prefix=api_v1_prefix)
+app.include_router(master.router, prefix=api_v1_prefix)
+
+# HR Module (Member 2)
+app.include_router(departments.router, prefix=api_v1_prefix)
+app.include_router(employees.router, prefix=api_v1_prefix)
+app.include_router(attendance.router, prefix=api_v1_prefix)
+app.include_router(leaves.router, prefix=api_v1_prefix)
+
+# Inventory Module (Member 4)
+app.include_router(categories.router, prefix=api_v1_prefix)
+app.include_router(products.router, prefix=api_v1_prefix)
+app.include_router(warehouses.router, prefix=api_v1_prefix)
 app.include_router(inventory.router, prefix=api_v1_prefix)
+
+# Other Module placeholders
+app.include_router(crm.router, prefix=api_v1_prefix)
 app.include_router(procurement.router, prefix=api_v1_prefix)
 app.include_router(finance.router, prefix=api_v1_prefix)
 app.include_router(reports.router, prefix=api_v1_prefix)
 
 
-@app.get("/")
+@app.get("/", tags=["Health"])
 def root():
     return {
-        "system": "SmartERP",
+        "system": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "module": "Member 5: Sales Management System",
+        "status": "Online",
         "docs": "/docs",
         "redoc": "/redoc",
-        "status": "online",
-        "endpoints": {
+        "modules": {
             "auth": f"{api_v1_prefix}/auth",
             "sales": f"{api_v1_prefix}/sales",
+            "inventory": f"{api_v1_prefix}/inventory",
+            "hr": f"{api_v1_prefix}/employees",
             "master_data": f"{api_v1_prefix}/master",
             "users": f"{api_v1_prefix}/users",
         }
     }
+
+
+@app.get("/health", tags=["Health"])
+def health_check():
+    return {"status": "healthy", "service": settings.PROJECT_NAME}

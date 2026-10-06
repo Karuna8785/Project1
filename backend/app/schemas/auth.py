@@ -24,8 +24,12 @@ class UserRegister(BaseModel):
     email: EmailStr
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6, max_length=100)
-    confirm_password: str = Field(..., min_length=6, max_length=100)
+    confirm_password: Optional[str] = None
     role: Optional[str] = "EMPLOYEE"  # ADMIN, MANAGER, EMPLOYEE
+
+    def model_post_init(self, __context):
+        if not self.confirm_password:
+            self.confirm_password = self.password
 
 
 class RoleOut(BaseModel):

@@ -1,8 +1,9 @@
 @echo off
+title SmartERP - Enterprise Platform Launcher
+cls
 echo ===================================================
-echo             SmartERP - Starting System
-echo  Member 1: Authentication & Security
-echo  Member 5: Sales Management System (Active)
+echo             SmartERP Enterprise Platform
+echo  Modules: Auth, HR, Inventory, Sales, Procurement
 echo ===================================================
 echo.
 
@@ -18,9 +19,9 @@ start "SmartERP Frontend (Vite)" cmd /k "cd /d "%ROOT_DIR%frontend" && npm run d
 echo.
 echo ===================================================
 echo SmartERP servers are starting up in separate windows!
-echo - Frontend:    http://localhost:5173
-echo - Backend API: http://localhost:8000
-echo - Swagger Docs: http://localhost:8000/docs
+echo - Frontend Portal: http://localhost:5173
+echo - Backend API:     http://localhost:8000
+echo - Swagger Docs:    http://localhost:8000/docs
 echo ===================================================
 echo.
 pause

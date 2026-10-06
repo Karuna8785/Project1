@@ -11,6 +11,12 @@ from app.models.user import User
 router = APIRouter(prefix="/auth", tags=["Authentication & Security"])
 
 
+@router.get("/status")
+def auth_status():
+    """Authentication service status."""
+    return {"module": "Authentication", "status": "active", "online": True}
+
+
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def register(user_in: UserRegister, request: Request, db: Session = Depends(get_db)):
     """Register a new user account with hashed password and role assignment."""
@@ -27,7 +33,7 @@ def login(login_data: UserLogin, request: Request, db: Session = Depends(get_db)
         db=db,
         username_or_email=login_data.username_or_email,
         password=login_data.password,
-        ip_address=client_ip
+        ip_address=client_ip,
     )
     access_token = create_access_token(subject=user.id)
     return {
@@ -52,7 +58,7 @@ def logout(request: Request, current_user: User = Depends(get_current_user), db:
         action="LOGOUT",
         user_id=current_user.id,
         details=f"User {current_user.username} logged out",
-        ip_address=client_ip
+        ip_address=client_ip,
     )
     return {"message": "Successfully logged out"}
 
@@ -63,7 +69,7 @@ def test_protected(current_user: User = Depends(get_current_user)):
     return {
         "message": f"Hello {current_user.full_name}, you have valid JWT access!",
         "user_id": current_user.id,
-        "roles": [r.name for r in current_user.roles]
+        "roles": [r.name for r in current_user.roles],
     }
 
 
@@ -72,5 +78,6 @@ def test_admin_only(current_user: User = Depends(require_role(["ADMIN"]))):
     """Security test endpoint restricted strictly to ADMIN role."""
     return {
         "message": f"Welcome Admin {current_user.full_name}! Full administrative access granted.",
-        "admin": True
+        "admin": True,
+        "role": "ADMIN",
     }

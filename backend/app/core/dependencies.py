@@ -38,16 +38,13 @@ def get_current_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    try:
-        user_id = int(user_id_str)
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid user ID format in token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    user = db.query(User).filter(User.id == user_id).first()
+    if user_id_str.isdigit():
+        user = db.query(User).filter(User.id == int(user_id_str)).first()
+    else:
+        user = db.query(User).filter(
+            (User.username == user_id_str) | (User.email == user_id_str)
+        ).first()
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
