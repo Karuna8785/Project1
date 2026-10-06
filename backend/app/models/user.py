@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Table
-from sqlalchemy.orm import relationship
+
 from app.database import Base
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Table
+from sqlalchemy.orm import relationship
 
 # Many-to-Many Association Tables
 user_roles = Table(

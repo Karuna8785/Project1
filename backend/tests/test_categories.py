@@ -1,5 +1,3 @@
-import pytest
-
 def test_create_category(client, auth_headers):
     response = client.post(
         "/api/v1/categories",

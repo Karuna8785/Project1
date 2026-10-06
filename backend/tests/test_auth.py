@@ -1,7 +1,7 @@
-import pytest
-from app.models.user import User
-from app.models.audit_log import AuditLog
 from app.core.security import verify_password
+from app.models.audit_log import AuditLog
+from app.models.user import User
+
 
 def test_user_registration(client):
     response = client.post(

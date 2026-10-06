@@ -1,20 +1,25 @@
-from typing import Optional, List
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 from app.database import get_db
+from app.dependencies import require_permission
 from app.models.category import Category
 from app.models.product import Product
-from app.schemas.category import CategoryCreate, CategoryUpdate, CategoryResponse, CategoryListResponse
-from app.dependencies import get_current_user, require_permission
 from app.models.user import User
+from app.schemas.category import (
+    CategoryCreate,
+    CategoryListResponse,
+    CategoryResponse,
+    CategoryUpdate,
+)
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/categories", tags=["Inventory — Categories"])
 
 @router.get("", response_model=CategoryListResponse)
 def get_categories(
-    search: Optional[str] = Query(None, description="Search by name or code"),
-    is_active: Optional[bool] = Query(None, description="Filter by active status"),
+    search: str | None = Query(None, description="Search by name or code"),
+    is_active: bool | None = Query(None, description="Filter by active status"),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
     db: Session = Depends(get_db),

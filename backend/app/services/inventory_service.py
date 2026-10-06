@@ -1,14 +1,13 @@
 from decimal import Decimal
-from typing import Optional, List, Tuple
+
+from app.models.category import Category
+from app.models.inventory import WarehouseStock
+from app.models.product import Product
+from app.models.stock_movement import StockMovement
+from app.models.warehouse import Warehouse
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import func
-from app.models.product import Product
-from app.models.category import Category
-from app.models.warehouse import Warehouse
-from app.models.inventory import WarehouseStock
-from app.models.stock_movement import StockMovement
-from app.models.user import User
+
 
 class InventoryService:
     @staticmethod
@@ -50,10 +49,10 @@ class InventoryService:
         warehouse_id: int,
         quantity: int,
         reference_type: str = "MANUAL",
-        reference_number: Optional[str] = None,
-        notes: Optional[str] = None,
-        user_id: Optional[int] = None
-    ) -> Tuple[WarehouseStock, StockMovement]:
+        reference_number: str | None = None,
+        notes: str | None = None,
+        user_id: int | None = None
+    ) -> tuple[WarehouseStock, StockMovement]:
         if quantity <= 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Quantity must be greater than zero")
 
@@ -97,10 +96,10 @@ class InventoryService:
         warehouse_id: int,
         quantity: int,
         reference_type: str = "MANUAL",
-        reference_number: Optional[str] = None,
-        notes: Optional[str] = None,
-        user_id: Optional[int] = None
-    ) -> Tuple[WarehouseStock, StockMovement]:
+        reference_number: str | None = None,
+        notes: str | None = None,
+        user_id: int | None = None
+    ) -> tuple[WarehouseStock, StockMovement]:
         if quantity <= 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Quantity must be greater than zero")
 
@@ -152,9 +151,9 @@ class InventoryService:
         adjustment_type: str,
         quantity: int,
         reason: str,
-        notes: Optional[str] = None,
-        user_id: Optional[int] = None
-    ) -> Tuple[WarehouseStock, StockMovement]:
+        notes: str | None = None,
+        user_id: int | None = None
+    ) -> tuple[WarehouseStock, StockMovement]:
         if quantity <= 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Adjustment quantity must be greater than zero")
 
@@ -208,10 +207,10 @@ class InventoryService:
         source_warehouse_id: int,
         destination_warehouse_id: int,
         quantity: int,
-        reference_number: Optional[str] = None,
-        notes: Optional[str] = None,
-        user_id: Optional[int] = None
-    ) -> Tuple[WarehouseStock, WarehouseStock, StockMovement, StockMovement]:
+        reference_number: str | None = None,
+        notes: str | None = None,
+        user_id: int | None = None
+    ) -> tuple[WarehouseStock, WarehouseStock, StockMovement, StockMovement]:
         if source_warehouse_id == destination_warehouse_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -310,14 +309,14 @@ class InventoryService:
         warehouse_id: int,
         quantity: int,
         reference_id: str,
-        notes: Optional[str] = "Sales Order Confirmation",
-        user_id: Optional[int] = None
+        notes: str | None = "Sales Order Confirmation",
+        user_id: int | None = None
     ) -> StockMovement:
         """
         Reusable integration service for Member 5 (Sales).
         Deducts stock atomically upon confirmed sales invoice/order.
         """
-        stock, movement = InventoryService.stock_out(
+        _stock, movement = InventoryService.stock_out(
             db=db,
             product_id=product_id,
             warehouse_id=warehouse_id,
@@ -342,14 +341,14 @@ class InventoryService:
         warehouse_id: int,
         quantity: int,
         reference_id: str,
-        notes: Optional[str] = "Purchase Order Receipt",
-        user_id: Optional[int] = None
+        notes: str | None = "Purchase Order Receipt",
+        user_id: int | None = None
     ) -> StockMovement:
         """
         Reusable integration service for Member 6 (Procurement).
         Increases stock atomically upon receipt of purchase shipment.
         """
-        stock, movement = InventoryService.stock_in(
+        _stock, movement = InventoryService.stock_in(
             db=db,
             product_id=product_id,
             warehouse_id=warehouse_id,

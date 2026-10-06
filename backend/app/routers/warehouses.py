@@ -1,21 +1,21 @@
-from typing import Optional, List
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 from app.database import get_db
-from app.models.warehouse import Warehouse
+from app.dependencies import require_permission
 from app.models.inventory import WarehouseStock
 from app.models.product import Product
+from app.models.user import User
+from app.models.warehouse import Warehouse
 from app.schemas.warehouse import (
     WarehouseCreate,
-    WarehouseUpdate,
-    WarehouseResponse,
     WarehouseDetailResponse,
     WarehouseListResponse,
+    WarehouseResponse,
     WarehouseStockItem,
+    WarehouseUpdate,
 )
-from app.dependencies import require_permission
-from app.models.user import User
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/warehouses", tags=["Inventory — Warehouses"])
 
@@ -50,8 +50,8 @@ def build_warehouse_response(warehouse: Warehouse, db: Session) -> WarehouseResp
 
 @router.get("", response_model=WarehouseListResponse)
 def get_warehouses(
-    search: Optional[str] = Query(None, description="Search by name, code, city, contact"),
-    is_active: Optional[bool] = Query(None, description="Filter active/inactive"),
+    search: str | None = Query(None, description="Search by name, code, city, contact"),
+    is_active: bool | None = Query(None, description="Filter active/inactive"),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
     db: Session = Depends(get_db),

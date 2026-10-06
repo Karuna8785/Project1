@@ -1,14 +1,15 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional, List
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 
 class ProductBase(BaseModel):
     product_code: str = Field(..., min_length=2, max_length=50, description="Unique product code (e.g. PRD-001)")
     sku: str = Field(..., min_length=2, max_length=50, description="Unique Stock Keeping Unit (e.g. SKU-ELEC-01)")
-    barcode: Optional[str] = Field(None, max_length=100)
+    barcode: str | None = Field(None, max_length=100)
     product_name: str = Field(..., min_length=2, max_length=150)
-    description: Optional[str] = None
+    description: str | None = None
     category_id: int
     unit: str = Field(default="pcs", max_length=30)
     cost_price: Decimal = Field(default=Decimal("0.00"), ge=0, description="Cost price cannot be negative")
@@ -39,24 +40,24 @@ class ProductCreate(ProductBase):
     pass
 
 class ProductUpdate(BaseModel):
-    product_code: Optional[str] = Field(None, min_length=2, max_length=50)
-    sku: Optional[str] = Field(None, min_length=2, max_length=50)
-    barcode: Optional[str] = Field(None, max_length=100)
-    product_name: Optional[str] = Field(None, min_length=2, max_length=150)
-    description: Optional[str] = None
-    category_id: Optional[int] = None
-    unit: Optional[str] = Field(None, max_length=30)
-    cost_price: Optional[Decimal] = Field(None, ge=0)
-    selling_price: Optional[Decimal] = Field(None, ge=0)
-    tax_percentage: Optional[Decimal] = Field(None, ge=0, le=100)
-    reorder_level: Optional[int] = Field(None, ge=0)
-    minimum_stock_level: Optional[int] = Field(None, ge=0)
-    maximum_stock_level: Optional[int] = Field(None, ge=0)
-    is_active: Optional[bool] = None
+    product_code: str | None = Field(None, min_length=2, max_length=50)
+    sku: str | None = Field(None, min_length=2, max_length=50)
+    barcode: str | None = Field(None, max_length=100)
+    product_name: str | None = Field(None, min_length=2, max_length=150)
+    description: str | None = None
+    category_id: int | None = None
+    unit: str | None = Field(None, max_length=30)
+    cost_price: Decimal | None = Field(None, ge=0)
+    selling_price: Decimal | None = Field(None, ge=0)
+    tax_percentage: Decimal | None = Field(None, ge=0, le=100)
+    reorder_level: int | None = Field(None, ge=0)
+    minimum_stock_level: int | None = Field(None, ge=0)
+    maximum_stock_level: int | None = Field(None, ge=0)
+    is_active: bool | None = None
 
     @field_validator("product_code", "sku")
     @classmethod
-    def validate_code_or_sku(cls, v: Optional[str]) -> Optional[str]:
+    def validate_code_or_sku(cls, v: str | None) -> str | None:
         if v is not None:
             v = v.strip().upper()
             if not v:
@@ -65,7 +66,7 @@ class ProductUpdate(BaseModel):
 
     @field_validator("product_name")
     @classmethod
-    def validate_name(cls, v: Optional[str]) -> Optional[str]:
+    def validate_name(cls, v: str | None) -> str | None:
         if v is not None:
             v = v.strip()
             if not v:
@@ -82,16 +83,16 @@ class WarehouseStockSummary(BaseModel):
 
 class ProductResponse(ProductBase):
     id: int
-    category_name: Optional[str] = None
+    category_name: str | None = None
     total_stock: int = 0
     stock_status: str = "OUT OF STOCK"
-    created_by: Optional[int] = None
+    created_by: int | None = None
     created_at: datetime
     updated_at: datetime
-    warehouses_stock: List[WarehouseStockSummary] = []
+    warehouses_stock: list[WarehouseStockSummary] = []
 
     model_config = ConfigDict(from_attributes=True)
 
 class ProductListResponse(BaseModel):
     total: int
-    items: List[ProductResponse]
+    items: list[ProductResponse]

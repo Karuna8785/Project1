@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def inventory_setup(client, auth_headers):
     # Create category

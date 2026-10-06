@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Index
-from sqlalchemy.orm import relationship
+
 from app.database import Base
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String, Text
+from sqlalchemy.orm import relationship
+
 
 class StockMovement(Base):
     __tablename__ = "stock_movements"

@@ -1,9 +1,18 @@
+from app.config import settings
+from app.database import Base, SessionLocal, engine
+from app.routers import (
+    auth,
+    categories,
+    crm,
+    hr,
+    inventory,
+    products,
+    users,
+    warehouses,
+)
+from app.routers.auth import seed_default_roles_and_admin
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.config import settings
-from app.database import Base, engine, SessionLocal
-from app.routers import auth, users, categories, products, warehouses, inventory, hr, crm
-from app.routers.auth import seed_default_roles_and_admin
 
 # Initialize database tables
 Base.metadata.create_all(bind=engine)

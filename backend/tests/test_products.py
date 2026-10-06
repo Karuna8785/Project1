@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture
 def test_category(client, auth_headers):
     res = client.post(

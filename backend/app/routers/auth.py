@@ -1,12 +1,11 @@
+from app.core.security import create_access_token, get_password_hash, verify_password
+from app.database import get_db
+from app.dependencies import get_current_user
+from app.models.user import Permission, Role, User
+from app.schemas.user import LoginRequest, Token, UserCreate, UserResponse
+from app.services.audit_service import AuditService
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
-from app.database import get_db
-from app.core.security import verify_password, get_password_hash, create_access_token
-from app.models.user import User, Role, Permission
-from app.models.audit_log import AuditLog
-from app.schemas.user import LoginRequest, Token, UserCreate, UserResponse
-from app.dependencies import get_current_user, require_permission
-from app.services.audit_service import AuditService
 
 router = APIRouter(prefix="/auth", tags=["Authentication & Security"])
 

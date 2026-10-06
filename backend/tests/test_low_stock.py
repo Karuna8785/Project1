@@ -1,5 +1,3 @@
-import pytest
-
 def test_low_stock_and_out_of_stock_detection(client, auth_headers):
     # Category
     cat_id = client.post(

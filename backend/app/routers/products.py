@@ -1,20 +1,18 @@
-from typing import Optional, List
-from decimal import Decimal
+
+from app.database import get_db
+from app.dependencies import require_permission
+from app.models.category import Category
+from app.models.product import Product
+from app.models.user import User
+from app.schemas.product import (
+    ProductCreate,
+    ProductListResponse,
+    ProductResponse,
+    ProductUpdate,
+    WarehouseStockSummary,
+)
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from sqlalchemy import func
-from app.database import get_db
-from app.models.product import Product
-from app.models.category import Category
-from app.schemas.product import (
-    ProductCreate, 
-    ProductUpdate, 
-    ProductResponse, 
-    ProductListResponse,
-    WarehouseStockSummary
-)
-from app.dependencies import require_permission
-from app.models.user import User
 
 router = APIRouter(prefix="/products", tags=["Inventory — Products"])
 
@@ -69,10 +67,10 @@ def build_product_response(product: Product, db: Session) -> ProductResponse:
 
 @router.get("", response_model=ProductListResponse)
 def get_products(
-    search: Optional[str] = Query(None, description="Search by name, code, or SKU"),
-    category_id: Optional[int] = Query(None, description="Filter by Category"),
-    stock_status: Optional[str] = Query(None, description="IN STOCK, LOW STOCK, OUT OF STOCK"),
-    is_active: Optional[bool] = Query(None, description="Filter active/inactive"),
+    search: str | None = Query(None, description="Search by name, code, or SKU"),
+    category_id: int | None = Query(None, description="Filter by Category"),
+    stock_status: str | None = Query(None, description="IN STOCK, LOW STOCK, OUT OF STOCK"),
+    is_active: bool | None = Query(None, description="Filter active/inactive"),
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
     db: Session = Depends(get_db),
@@ -152,12 +150,11 @@ def create_product(
         )
 
     # Unique Barcode check if provided
-    if payload.barcode:
-        if db.query(Product).filter(Product.barcode == payload.barcode).first():
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail=f"Product with barcode '{payload.barcode}' already exists"
-            )
+    if payload.barcode and db.query(Product).filter(Product.barcode == payload.barcode).first():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Product with barcode '{payload.barcode}' already exists"
+        )
 
     product = Product(
         product_code=payload.product_code,

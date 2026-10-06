@@ -1,14 +1,14 @@
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+
 from app.database import get_db
-from app.models.user import User, Role
+from app.dependencies import require_permission
+from app.models.user import User
 from app.schemas.user import UserResponse
-from app.dependencies import get_current_user, require_permission
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/users", tags=["User Management"])
 
-@router.get("", response_model=List[UserResponse])
+@router.get("", response_model=list[UserResponse])
 def get_all_users(
     skip: int = 0,
     limit: int = 50,

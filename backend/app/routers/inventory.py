@@ -1,28 +1,26 @@
-from typing import Optional, List
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
-from sqlalchemy import func
+
 from app.database import get_db
+from app.dependencies import require_permission
 from app.models.inventory import WarehouseStock
 from app.models.product import Product
-from app.models.warehouse import Warehouse
-from app.models.category import Category
 from app.models.stock_movement import StockMovement
+from app.models.user import User
+from app.models.warehouse import Warehouse
 from app.schemas.inventory import (
-    StockInRequest,
-    StockOutRequest,
-    StockAdjustmentRequest,
-    StockTransferRequest,
     InventoryItemResponse,
     InventoryListResponse,
-    StockMovementResponse,
-    StockMovementListResponse,
+    InventorySummaryResponse,
     LowStockItemResponse,
-    InventorySummaryResponse
+    StockAdjustmentRequest,
+    StockInRequest,
+    StockMovementListResponse,
+    StockMovementResponse,
+    StockOutRequest,
+    StockTransferRequest,
 )
 from app.services.inventory_service import InventoryService
-from app.dependencies import require_permission
-from app.models.user import User
+from fastapi import APIRouter, Depends, Query, status
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/inventory", tags=["Inventory — Stock & Operations"])
 
@@ -80,11 +78,11 @@ def build_movement_response(mv: StockMovement) -> StockMovementResponse:
 
 @router.get("", response_model=InventoryListResponse)
 def get_inventory(
-    search: Optional[str] = Query(None, description="Search product name, code, SKU"),
-    product_id: Optional[int] = None,
-    warehouse_id: Optional[int] = None,
-    category_id: Optional[int] = None,
-    stock_status: Optional[str] = None,
+    search: str | None = Query(None, description="Search product name, code, SKU"),
+    product_id: int | None = None,
+    warehouse_id: int | None = None,
+    category_id: int | None = None,
+    stock_status: str | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
     db: Session = Depends(get_db),
@@ -155,9 +153,9 @@ def get_inventory_summary(
         recent_movements=recent_formatted
     )
 
-@router.get("/low-stock", response_model=List[LowStockItemResponse])
+@router.get("/low-stock", response_model=list[LowStockItemResponse])
 def get_low_stock(
-    warehouse_id: Optional[int] = None,
+    warehouse_id: int | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission("inventory.view"))
 ):
@@ -194,9 +192,9 @@ def get_low_stock(
 
 @router.get("/movements", response_model=StockMovementListResponse)
 def get_stock_movements(
-    product_id: Optional[int] = None,
-    warehouse_id: Optional[int] = None,
-    movement_type: Optional[str] = None,
+    product_id: int | None = None,
+    warehouse_id: int | None = None,
+    movement_type: str | None = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
     db: Session = Depends(get_db),

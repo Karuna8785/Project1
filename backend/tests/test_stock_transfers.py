@@ -1,5 +1,5 @@
 import pytest
-from app.models.inventory import WarehouseStock
+
 
 @pytest.fixture
 def transfer_setup(client, auth_headers):

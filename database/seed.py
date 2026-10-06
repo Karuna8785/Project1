@@ -5,16 +5,15 @@ import sys
 backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "backend"))
 sys.path.insert(0, backend_path)
 
-from app.database import SessionLocal, Base, engine
-from app.models.user import User, Role, Permission
+from app.core.security import get_password_hash
+from app.database import Base, SessionLocal, engine
 from app.models.audit_log import AuditLog
 from app.models.category import Category
 from app.models.product import Product
+from app.models.user import Permission, Role, User
 from app.models.warehouse import Warehouse
-from app.models.inventory import WarehouseStock
-from app.models.stock_movement import StockMovement
-from app.core.security import get_password_hash
 from app.services.inventory_service import InventoryService
+
 
 def seed_database():
     print("Initializing database tables...")

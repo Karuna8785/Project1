@@ -1,12 +1,13 @@
 from datetime import datetime
-from typing import Optional, List
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 
 class CategoryBase(BaseModel):
     category_code: str = Field(..., min_length=2, max_length=50, description="Unique category code (e.g. CAT-ELEC)")
     category_name: str = Field(..., min_length=2, max_length=100, description="Category name")
-    description: Optional[str] = None
-    parent_category_id: Optional[int] = None
+    description: str | None = None
+    parent_category_id: int | None = None
     is_active: bool = True
 
     @field_validator("category_code")
@@ -29,15 +30,15 @@ class CategoryCreate(CategoryBase):
     pass
 
 class CategoryUpdate(BaseModel):
-    category_code: Optional[str] = Field(None, min_length=2, max_length=50)
-    category_name: Optional[str] = Field(None, min_length=2, max_length=100)
-    description: Optional[str] = None
-    parent_category_id: Optional[int] = None
-    is_active: Optional[bool] = None
+    category_code: str | None = Field(None, min_length=2, max_length=50)
+    category_name: str | None = Field(None, min_length=2, max_length=100)
+    description: str | None = None
+    parent_category_id: int | None = None
+    is_active: bool | None = None
 
     @field_validator("category_code")
     @classmethod
-    def validate_code(cls, v: Optional[str]) -> Optional[str]:
+    def validate_code(cls, v: str | None) -> str | None:
         if v is not None:
             v = v.strip().upper()
             if not v:
@@ -46,7 +47,7 @@ class CategoryUpdate(BaseModel):
 
     @field_validator("category_name")
     @classmethod
-    def validate_name(cls, v: Optional[str]) -> Optional[str]:
+    def validate_name(cls, v: str | None) -> str | None:
         if v is not None:
             v = v.strip()
             if not v:
@@ -63,4 +64,4 @@ class CategoryResponse(CategoryBase):
 
 class CategoryListResponse(BaseModel):
     total: int
-    items: List[CategoryResponse]
+    items: list[CategoryResponse]

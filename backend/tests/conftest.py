@@ -1,18 +1,18 @@
 import os
 import sys
+
 import pytest
 
 # Ensure backend root is on sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from app.core.security import create_access_token, get_password_hash
+from app.database import Base, get_db
+from app.main import app
+from app.models.user import Role, User
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-
-from app.database import Base, get_db
-from app.main import app
-from app.models.user import User, Role, Permission
-from app.core.security import get_password_hash, create_access_token
 
 # In-memory SQLite database for testing
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
@@ -59,10 +59,7 @@ def db():
 
     session.close()
     if transaction.is_active:
-        try:
-            transaction.rollback()
-        except Exception:
-            pass
+        transaction.rollback()
     connection.close()
 
 @pytest.fixture

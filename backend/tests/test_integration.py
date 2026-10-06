@@ -1,12 +1,13 @@
-import pytest
-from app.services.inventory_service import InventoryService
 from decimal import Decimal
+
+from app.services.inventory_service import InventoryService
+
 
 def test_sales_deduct_stock_integration(db):
     # Setup test category, warehouse, product
     from app.models.category import Category
-    from app.models.warehouse import Warehouse
     from app.models.product import Product
+    from app.models.warehouse import Warehouse
 
     cat = Category(category_code="CAT-INT-S", category_name="Sales Int Cat")
     db.add(cat)

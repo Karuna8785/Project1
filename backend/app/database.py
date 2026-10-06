@@ -1,8 +1,9 @@
-import os
 import logging
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+
 from app.config import settings
+from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 logger = logging.getLogger("smarterp.database")
 
@@ -17,7 +18,7 @@ def get_engine():
                 pass
             logger.info("Successfully connected to PostgreSQL database.")
             return test_engine
-        except Exception:
+        except (SQLAlchemyError, OSError):
             logger.info(
                 "Local PostgreSQL not detected or offline. Operating seamlessly with SQLite: %s",
                 settings.SQLITE_FALLBACK_URL

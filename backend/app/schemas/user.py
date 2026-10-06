@@ -1,6 +1,7 @@
 from datetime import datetime
-from typing import Optional, List
-from pydantic import BaseModel, ConfigDict, field_validator
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
 
 class PermissionResponse(BaseModel):
     id: int
@@ -13,8 +14,8 @@ class PermissionResponse(BaseModel):
 class RoleResponse(BaseModel):
     id: int
     name: str
-    description: Optional[str] = None
-    permissions: List[PermissionResponse] = []
+    description: str | None = None
+    permissions: list[PermissionResponse] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -26,7 +27,7 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
-    roles: Optional[List[str]] = []
+    roles: list[str] | None = Field(default_factory=list)
 
     @field_validator("email")
     @classmethod
@@ -40,8 +41,8 @@ class UserResponse(UserBase):
     id: int
     is_superuser: bool
     created_at: datetime
-    roles: List[RoleResponse] = []
-    permissions: List[str] = []
+    roles: list[RoleResponse] = Field(default_factory=list)
+    permissions: list[str] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 

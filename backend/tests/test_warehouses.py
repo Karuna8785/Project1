@@ -1,5 +1,3 @@
-import pytest
-
 def test_create_warehouse(client, auth_headers):
     response = client.post(
         "/api/v1/warehouses",

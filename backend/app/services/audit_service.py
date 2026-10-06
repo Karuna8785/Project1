@@ -1,6 +1,8 @@
-from typing import Optional
-from sqlalchemy.orm import Session
+
 from app.models.audit_log import AuditLog
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+
 
 class AuditService:
     @staticmethod
@@ -8,8 +10,8 @@ class AuditService:
         db: Session,
         action: str,
         description: str,
-        user_id: Optional[int] = None,
-        ip_address: Optional[str] = None
+        user_id: int | None = None,
+        ip_address: str | None = None
     ) -> AuditLog:
         try:
             log_entry = AuditLog(
@@ -22,6 +24,6 @@ class AuditService:
             db.commit()
             db.refresh(log_entry)
             return log_entry
-        except Exception:
+        except SQLAlchemyError:
             db.rollback()
             return None

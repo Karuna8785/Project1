@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime
-from sqlalchemy.orm import relationship
+
 from app.database import Base
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
+from sqlalchemy.orm import relationship
+
 
 class Warehouse(Base):
     __tablename__ = "warehouses"

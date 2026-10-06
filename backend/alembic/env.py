@@ -1,15 +1,13 @@
 import os
 import sys
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
+
 from alembic import context
 
 # Add backend directory to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.database import Base, engine
-from app.config import settings
-import app.models  # load all models for metadata
 
 config = context.config
 
@@ -37,7 +35,7 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection, 
             target_metadata=target_metadata,
-            render_as_batch=True if "sqlite" in str(engine.url) else False
+            render_as_batch="sqlite" in str(engine.url)
         )
 
         with context.begin_transaction():

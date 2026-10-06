@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, DateTime, ForeignKey, UniqueConstraint, Index
-from sqlalchemy.orm import relationship
+
 from app.database import Base
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, UniqueConstraint
+from sqlalchemy.orm import relationship
+
 
 class WarehouseStock(Base):
     __tablename__ = "inventory"
