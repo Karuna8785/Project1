@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import Base, engine, SessionLocal
-from app.routers import auth, hr, crm
+from app.routers import auth, hr, crm, categories, products
 from app.routers.auth import seed_default_roles_and_admin
 
 # Initialize database tables
@@ -31,6 +31,8 @@ app.add_middleware(
 
 # Include Authentication & Module Routers
 app.include_router(auth.router, prefix=settings.API_V1_STR)
+app.include_router(categories.router, prefix=settings.API_V1_STR)
+app.include_router(products.router, prefix=settings.API_V1_STR)
 app.include_router(hr.router, prefix=settings.API_V1_STR)
 app.include_router(crm.router, prefix=settings.API_V1_STR)
 
