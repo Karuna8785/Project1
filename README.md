@@ -1,213 +1,197 @@
-# SmartERP — Enterprise Resource Planning (Member 6 Deliverable)
+# SmartERP — Enterprise Resource Planning System
 
-A production-grade, modular **SmartERP (Enterprise Resource Planning)** system built from scratch with clean multi-tier architecture, designed for seamless enterprise scalability and cross-functional team collaboration.
+SmartERP is a modular, high-performance Enterprise Resource Planning (ERP) platform designed for commercial excellence, security, and seamless cross-module workflows.
 
-> **Team Allocation**: **Member 6**
-> **Assigned Responsibility**: **Module 6 — Procurement & Finance** *(Suppliers, Purchases / Purchase Orders, Expenses, Accounts Payable & Cash Outflows)*
-> **Implementation Status**: **Fully Functional & Tested**
+> **Current Implementation Phase**: 
+> **Member 5: Sales Management Module** (Quotations, Sales Orders, Invoices, Payments, and Financial Analytics) is **fully implemented, tested, and operational**, built on top of the Member 1 Authentication & Security foundation and master catalog data.
 
 ---
 
-## 1. Team Module Allocation Matrix
+## 1. Team Module Allocation
 
-SmartERP is designed around a modular domain-driven architecture where each member owns a specific business domain. The architectural skeleton and endpoints are established for the entire ERP system, with **Module 6 fully implemented and operable**.
-
-| Member | Module Domain | Functional Scope | Status |
+| Member | Responsibility | Status | Scope / Deliverable |
 |---|---|---|---|
-| Member 1 | Authentication & Security | Login, Register, JWT, Roles, Permissions, Audit Logs | Architecture Foundation Ready |
-| Member 2 | HR Management | Employees, Departments, Attendance, Leave | Architecture Scaffolded (`/api/v1/hr`) |
-| Member 3 | CRM | Customers, Leads, Customer History | Architecture Scaffolded (`/api/v1/crm`) |
-| Member 4 | Inventory | Products, Categories, Warehouses, Stock Intake | Architecture Scaffolded (`/api/v1/inventory`) |
-| Member 5 | Sales | Quotations, Orders, Invoices, Customer Payments | Architecture Scaffolded (`/api/v1/sales`) |
-| **Member 6** | **Procurement & Finance** | **Suppliers, Purchase Orders, Line Items, Goods Receiving, Expenses, Accounts Payable Aging, Cash Outflows** | **FULLY IMPLEMENTED & TESTED** |
-| Member 7 | Dashboard & Integration | Cross-module Analytics, Executive Reports, E2E Testing | Architecture Scaffolded (`/api/v1/reports`) |
+| **Member 1** | Authentication & Security | **Functional** | Login, Register, JWT, Roles (`ADMIN`, `MANAGER`, `EMPLOYEE`), RBAC, Security Audit Logs |
+| **Member 2** | HR Management | Planned | Employees, Departments, Attendance, Leave |
+| **Member 3** | CRM | Planned (Master Integrated) | Customers, Leads, Interaction History |
+| **Member 4** | Inventory | Planned (Master Integrated) | Products, SKUs, Categories, Warehouses, Stock Movements |
+| **Member 5** | **Sales Management** | **FULLY IMPLEMENTED** | **Quotations, Sales Orders, Commercial Invoices, Payment Collections, Pipeline Analytics, Voucher/Invoice Printing** |
+| **Member 6** | Procurement & Finance | Planned | Suppliers, Purchase Orders, Expenses, General Ledger |
+| **Member 7** | Dashboard & Integration | Planned | Cross-module analytics, executive reporting |
 
 ---
 
 ## 2. Technology Stack
 
-- **Frontend**:
-  - React 18 / 19
-  - Vite
-  - JavaScript (ESNext)
-  - React Router DOM v7
-  - Tailwind CSS v4
-  - Lucide React Icons
-  - Axios (with automatic JWT bearer token interceptors)
+### Frontend
+- **React 18** + **Vite**
+- **JavaScript (ES6+)**
+- **React Router v6**
+- **Tailwind CSS** (Custom enterprise theme, glassmorphism, responsive)
+- **Lucide React** (Modern enterprise icons)
+- **Axios** (API client with automatic JWT bearer interceptor)
 
-- **Backend**:
-  - Python 3.14 / 3.10+
-  - FastAPI (REST API with automatic OpenAPI Swagger & ReDoc)
-  - SQLAlchemy 2.0 (ORM)
-  - Pydantic V2 (Type-safe input validation & schemas)
-  - PostgreSQL (Primary target; includes automatic SQLite fallback for zero-configuration local runs)
-  - Alembic (Database migration framework)
-  - python-jose (JWT encoding/decoding)
-  - passlib / bcrypt (Secure password hashing)
-  - Pytest & HTTPX (Automated test suite)
+### Backend
+- **Python 3.12**
+- **FastAPI** (Asynchronous, high performance)
+- **SQLAlchemy 2.0** ORM
+- **Pydantic V2** (Type validation and schemas)
+- **PostgreSQL** (Production database) with **SQLite** auto-fallback for zero-config local development
+- **python-jose** (JWT creation and signature validation)
+- **bcrypt** (Secure salted password hashing)
+- **Pytest** (Automated unit and integration test suites)
 
-- **Zero External Dependencies**:
-  - **NO Docker required**
-  - **NO Paid/External APIs required** (No OpenAI, Stripe, Google Maps, Firebase, etc.)
-  - Runs 100% locally on Windows.
+### Constraints Respected
+- **No Docker required** — Runs 100% locally on Windows.
+- **No external paid API keys required** — 100% self-hosted and privacy-respecting.
 
 ---
 
-## 3. Project Structure
+## 3. Member 5: Sales Module Architecture & Features
 
-```text
+### 3.1. Quotations (Estimates & Proposals)
+- Generate sequential quote numbers (`QT-2026-0001`).
+- Customer selection from CRM master data or ad-hoc entry.
+- Dynamic line items with real-time computation:
+  - Unit Price, Quantity, Discount %, GST/Tax %
+  - Automatic Subtotal, Total Discount, Tax Amount, and Grand Total.
+- Status workflow: `Draft` &rarr; `Sent` &rarr; `Accepted` &rarr; `Rejected`.
+- **One-Click Conversion**: Convert accepted quotation directly into an active Sales Order.
+- Official printable quotation preview with company header.
+
+### 3.2. Sales Orders (Fulfilment Bookings)
+- Sequential order numbering (`SO-2026-0001`).
+- Shipping and billing address management.
+- Expected delivery scheduling.
+- Lifecycle tracking: `Draft` &rarr; `Confirmed` &rarr; `Processing` &rarr; `Shipped` &rarr; `Delivered` &rarr; `Cancelled`.
+- **One-Click Invoicing**: Generate commercial accounts receivable invoice directly from the sales order.
+- Printable order picking slip.
+
+### 3.3. Invoices (Accounts Receivable)
+- Sequential invoice numbering (`INV-2026-0001`).
+- Due date tracking with automatic `Overdue` flagging.
+- Real-time balance calculations: `Total Amount`, `Amount Paid`, and `Balance Due`.
+- Statuses: `Unpaid`, `Partially Paid`, `Paid`, `Overdue`.
+- Direct "Collect Payment" trigger.
+- Official printable tax invoice with GST breakdown and signature box.
+
+### 3.4. Payments & Collections
+- Sequential receipt vouchers (`PAY-2026-0001`).
+- Multi-channel payment recording:
+  - Bank Transfer (NEFT/RTGS/IMPS)
+  - UPI (Unified Payments Interface)
+  - Credit / Debit Cards
+  - Cash
+  - Bank Cheques
+- Real-time auto-settlement: Recording payment automatically recalculates target invoice `amount_paid` and `balance_due`, and updates invoice status to `Paid` or `Partially Paid`.
+- Printable payment acknowledgement receipt voucher.
+
+### 3.5. Sales Analytics & Executive KPIs
+- High-level KPIs: Total Invoiced Revenue, Collected Cash, Outstanding Receivables, Quotation-to-Order Win Rate %.
+- Interactive commercial lifecycle funnel stepper.
+- Monthly revenue trajectory chart.
+- Top selling products by units and revenue.
+- Live activity audit log feed.
+
+---
+
+## 4. Project Directory Structure
+
+```
 SmartERP/
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── routes/
-│   │   │   │   ├── auth.py              # Register, Login, Me, Logout
-│   │   │   │   ├── users.py             # User listing, Role definitions
-│   │   │   │   ├── procurement.py       # Suppliers & Purchase Orders API (Module 6)
-│   │   │   │   ├── finance.py           # Expenses, AP, Transactions API (Module 6)
-│   │   │   │   ├── hr.py                # Member 2 Handover Scaffold
-│   │   │   │   ├── crm.py               # Member 3 Handover Scaffold
-│   │   │   │   ├── inventory.py         # Member 4 Handover Scaffold
-│   │   │   │   ├── sales.py             # Member 5 Handover Scaffold
-│   │   │   │   └── reports.py           # Member 7 Handover Scaffold
-│   │   │   └── deps.py                  # Database session & JWT auth dependencies
-│   │   ├── core/
-│   │   │   ├── config.py                # Application settings & environment config
-│   │   │   └── security.py              # Password hashing & JWT token services
-│   │   ├── database/
-│   │   │   ├── base.py                  # Base model metadata discovery
-│   │   │   └── session.py               # Engine, SessionLocal, resilient fallback
-│   │   ├── models/
-│   │   │   ├── user.py                  # User, Role, Permission, AuditLog
-│   │   │   ├── supplier.py              # Supplier Entity
-│   │   │   ├── purchase_order.py        # PurchaseOrder & PurchaseOrderItem
-│   │   │   ├── expense.py               # Operating Expense Entity
-│   │   │   └── financial_transaction.py # Cash Outflow Transaction Ledger
-│   │   ├── schemas/
-│   │   │   ├── user.py                  # User & Auth DTOs
-│   │   │   ├── supplier.py              # Supplier DTOs
-│   │   │   ├── purchase_order.py        # PO & Line Items DTOs, Stats
-│   │   │   ├── expense.py               # Expense DTOs & Analytics
-│   │   │   └── finance.py               # AP Aging & Financial Overview DTOs
-│   │   ├── services/
-│   │   │   ├── supplier_service.py      # Supplier business logic
-│   │   │   ├── purchase_service.py      # PO workflows, calculations, receipts
-│   │   │   ├── expense_service.py       # Expense approval & payment flows
-│   │   │   └── finance_service.py       # AP aging analysis & transaction logs
-│   │   └── main.py                      # FastAPI application entrypoint & CORS
-│   ├── seed.py                          # Database seeder with realistic test data
-│   ├── requirements.txt                 # Backend Python package requirements
-│   └── .env.example                     # Environment variables template
-│
 ├── frontend/
 │   ├── src/
-│   │   ├── components/                  # Reusable UI widgets
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx          # JWT authentication state & test persona switcher
-│   │   ├── layouts/
-│   │   │   └── DashboardLayout.jsx      # ERP Sidebar, Top Navbar, Mobile Drawer
+│   │   ├── components/
+│   │   │   ├── common/         # StatCard, Badge, Modal
+│   │   │   └── sales/          # QuotationModal, SalesOrderModal, InvoiceModal, PaymentModal, DocumentPrintModal
+│   │   ├── context/            # AuthContext, NotificationContext
+│   │   ├── layouts/            # DashboardLayout (Sidebar, Navbar, Mobile Menu)
 │   │   ├── pages/
-│   │   │   ├── auth/
-│   │   │   │   ├── Login.jsx            # Sign In with demo account pills
-│   │   │   │   └── Register.jsx         # User registration with validation
-│   │   │   ├── procurement/
-│   │   │   │   ├── ProcurementOverview.jsx # Command center with KPI metrics
-│   │   │   │   ├── Suppliers.jsx        # Supplier directory & registration modal
-│   │   │   │   └── PurchaseOrders.jsx   # PO creation, receiving, invoice printable modal
-│   │   │   ├── finance/
-│   │   │   │   ├── Expenses.jsx         # Operating expenses & approval flows
-│   │   │   │   └── AccountsPayable.jsx  # AP aging report & payout ledger
-│   │   │   ├── common/
-│   │   │   │   └── ModulePlaceholder.jsx# Team handover blueprints (Modules 1, 2, 3, 4, 5, 7)
-│   │   │   └── profile/
-│   │   │       └── Profile.jsx          # User roles, permissions, session info
-│   │   ├── services/
-│   │   │   └── api.js                   # Axios HTTP client with interceptors
-│   │   ├── App.jsx                      # Route hierarchy & ProtectedRoute wrapper
-│   │   ├── index.css                    # Tailwind CSS custom ERP styling
-│   │   └── main.jsx                     # Vite React entrypoint
+│   │   │   ├── auth/           # Login, Register
+│   │   │   ├── dashboard/      # SalesDashboard
+│   │   │   ├── sales/          # QuotationsPage, SalesOrdersPage, InvoicesPage, PaymentsPage
+│   │   │   ├── placeholder/    # Roadmap placeholder for Members 2, 3, 4, 6, 7
+│   │   │   └── profile/        # ProfilePage & RBAC tester
+│   │   ├── services/           # api.js, authService.js, salesService.js
+│   │   ├── utils/              # constants.js, formatters
+│   │   ├── routes/             # AppRoutes, ProtectedRoute
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── index.html
 │   ├── package.json
+│   ├── tailwind.config.js
 │   └── vite.config.js
 │
+├── backend/
+│   ├── app/
+│   │   ├── api/routes/
+│   │   │   ├── auth.py         # Login, Register, Me, Logout, RBAC test routes
+│   │   │   ├── sales.py        # Quotations, Orders, Invoices, Payments, Analytics endpoints
+│   │   │   ├── master.py       # Customers & Products catalog endpoints
+│   │   │   ├── users.py        # Users listing & security audit logs
+│   │   │   ├── hr.py           # Member 2 clean placeholder
+│   │   │   ├── crm.py          # Member 3 clean placeholder
+│   │   │   ├── inventory.py    # Member 4 clean placeholder
+│   │   │   ├── procurement.py  # Member 6 clean placeholder
+│   │   │   ├── finance.py      # Member 6 clean placeholder
+│   │   │   └── reports.py      # Member 7 clean placeholder
+│   │   ├── core/               # config.py, security.py (bcrypt + JWT), dependencies.py
+│   │   ├── database/           # session.py (SQLAlchemy + auto-fallback), base.py
+│   │   ├── models/             # User, Role, Customer, Product, Quotation, SalesOrder, Invoice, Payment
+│   │   ├── schemas/            # Pydantic V2 models for all entities
+│   │   ├── services/           # Business logic & calculations for all sales entities
+│   │   └── main.py             # FastAPI entrypoint, lifespan, auto-seeder, CORS
+│   ├── .env.example
+│   ├── requirements.txt
+│   └── seed.py                 # Standalone database seeder
+│
 ├── database/
-│   └── schema.sql                       # Complete PostgreSQL DDL schema definition
-├── docs/                                # Technical specifications
+│   └── schema.sql              # Production PostgreSQL DDL schema
+│
+├── docs/
+│   ├── ARCHITECTURE.md         # System architecture diagram & module contracts
+│   ├── SALES_MODULE_SPEC.md    # Calculations, state machines & API specs
+│   └── TEAM_INTEGRATION_GUIDE.md # Guide for other team members
+│
 ├── tests/
-│   └── test_module6.py                  # Pytest test suite (100% passing)
+│   ├── conftest.py             # Pytest database & seed fixture
+│   ├── test_auth.py            # Authentication, registration & JWT tests
+│   ├── test_sales_quotations.py# Quotation creation, calculations & order conversion
+│   ├── test_sales_orders.py    # Sales order lifecycle & invoice conversion
+│   └── test_sales_invoices.py  # Invoices & payment auto-settlement tests
+│
 ├── .gitignore
-├── start.bat                            # Windows 1-click double-clickable launcher
-└── README.md
+├── pytest.ini
+├── README.md
+└── start.bat                   # 1-Click Windows startup script
 ```
 
 ---
 
-## 4. Module 6 — Procurement & Finance Features
+## 5. Getting Started (Windows)
 
-### A. Supplier & Vendor Management (`/procurement/suppliers`)
-- **Complete Vendor Directory**: Registered suppliers with search, sorting, and status filtering (`ACTIVE`, `INACTIVE`, `BLOCKED`).
-- **Comprehensive Fields**: Company Name, Auto-generated Supplier Code (`SUP-XXXX`), Contact Person, Email, Phone, Address, City, Country, Tax ID, Payment Terms (`Net 15`, `Net 30`, `Net 60`, `Immediate`, `Advance`), Banking Details, and Capability Notes.
-- **Supplier Metrics**: Live computation of Total Orders Placed, Cumulative Spend, and Pending Payables.
-- **Relational Integrity**: Prevents accidental hard-deletion of active suppliers with purchase history by automatically deactivating them.
+### Prerequisites
+- Python 3.10+ (Python 3.12 recommended)
+- Node.js 18+ (Node.js 20 or 24 recommended)
+- Git
 
-### B. Purchase Orders & Line Items (`/procurement/purchase-orders`)
-- **Auto PO Numbering**: Sequential format `PO-YYYY-XXXX`.
-- **Dynamic Line Items Editor**: Add/remove multiple items with Item Code, Item Name, Quantity, Unit Price, and Tax Rate (%).
-- **Financial Calculations**: Real-time auto-calculation of Subtotal, Tax Total, Shipping/Freight, Discounts, and Grand Total.
-- **Order Lifecycle Workflow**:
-  $$\text{DRAFT} \longrightarrow \text{PENDING\_APPROVAL} \longrightarrow \text{APPROVED} \longrightarrow \text{ORDERED} \longrightarrow \text{RECEIVED} \ (\text{or } \text{CANCELLED})$$
-- **Warehouse Goods Receipt**: Allows warehouse staff to enter received quantities and inspection notes. Partially received items maintain the order in progress; once all items are delivered, the order automatically transitions to `RECEIVED`.
-- **Supplier Settlement**: Record partial or full payments directly against a PO; automatically creates a corresponding financial transaction and updates `payment_status` (`UNPAID` $\rightarrow$ `PARTIALLY_PAID` $\rightarrow$ `PAID`).
-- **Printable PO Voucher**: Professional invoice voucher modal formatted for physical print or PDF export.
-
-### C. Operating Expenses Management (`/finance/expenses`)
-- **Category Cost Centers**: *Software & IT, Utilities, Logistics & Freight, Travel & Transport, Office Supplies, Maintenance & Repairs, Rent & Facilities, Marketing, Professional Services, Other*.
-- **Expense Logging**: Title, Payee Vendor, Amount, Tax, Date, Payment Method (*Bank Wire, Credit Card, Cheque, Cash*), Reference / Invoice No, Business Justification.
-- **Approval Hierarchy**: `PENDING` $\rightarrow$ `APPROVED` $\rightarrow$ `PAID` (or `REJECTED`).
-- **Automatic Financial Ledger Entry**: When an expense is marked `PAID`, a transaction record is automatically created in the cash disbursement ledger.
-- **Expense Analytics**: Aggregations by cost category and monthly spend.
-
-### D. Accounts Payable & Cash Outflows (`/finance/payables`)
-- **AP Aging Buckets**: Real-time categorization into:
-  - **Current Due** (within agreed credit terms)
-  - **1 – 30 Days** Aging
-  - **31 – 60 Days** Aging
-  - **60+ Days** Aging (Overdue liabilities)
-- **1-Click Settlement**: Settle vendor liabilities directly from the aging table.
-- **Financial Outflow Ledger**: Complete historical audit trail of all disbursements with payment method, reference number, payee, and timestamp.
+### 1-Click Launch (Recommended)
+Double-click `start.bat` from the root directory or run in terminal:
+```cmd
+start.bat
+```
+This automatically launches both backend and frontend servers in separate windows.
 
 ---
 
-## 5. Security & Authentication Integration
-
-- **JWT Authentication**: Industry-standard JSON Web Tokens with HS256 encryption.
-- **Secure Password Hashing**: Hashed using `passlib[bcrypt]`. Plaintext passwords are never stored.
-- **Role-Based Access Control (RBAC)**: Support for `ADMIN`, `PROCUREMENT_OFFICER`, `FINANCE_OFFICER`, `MANAGER`, and `EMPLOYEE`.
-- **Fast Persona Switcher**: The frontend includes 1-click test pills on the login and header bar to instantly test different roles:
-  - **Admin**: `admin` / `Admin@123`
-  - **Procurement Lead**: `sarah.procure` / `Procure@123`
-  - **Finance Controller**: `david.finance` / `Finance@123`
-- **Security Audit Logs**: Automated logging of login, registration, logout, and critical actions.
-
----
-
-## 6. How to Run on Windows (Quick Start)
-
-### Option A: 1-Click Double-Click (`start.bat`)
-Simply double-click the **`start.bat`** script in the project root. It will:
-1. Verify virtual environments and node modules.
-2. Launch the FastAPI backend on `http://localhost:8000` in a dedicated PowerShell window.
-3. Launch the React Vite frontend on `http://localhost:5173` in a dedicated PowerShell window.
-
----
-
-### Option B: Manual Terminal Execution
+### Manual Setup
 
 #### 1. Backend Setup
-Open PowerShell or Command Prompt:
 ```powershell
 cd backend
 
-# Create virtual environment (if not already created)
+# Create virtual environment
 python -m venv .venv
 
 # Activate virtual environment
@@ -216,116 +200,71 @@ python -m venv .venv
 # Install dependencies
 pip install -r requirements.txt
 
-# Run initial seed (automatically runs on startup as well)
-python seed.py
-
-# Start FastAPI server
-uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+# Run server
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 - Backend API: `http://localhost:8000`
-- Interactive Swagger UI: `http://localhost:8000/docs`
-- ReDoc Documentation: `http://localhost:8000/redoc`
+- Interactive Swagger Docs: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
 #### 2. Frontend Setup
-In a second terminal window:
 ```powershell
 cd frontend
 
 # Install packages
-npm.cmd install
+npm install
 
-# Start Vite development server
-npm.cmd run dev
+# Start Vite dev server
+npm run dev
 ```
-- Frontend Portal: `http://localhost:5173`
+- Frontend UI: `http://localhost:5173`
 
 ---
 
-## 7. PostgreSQL Database Configuration
+## 6. Pre-Configured Demo Credentials
 
-By default, SmartERP is configured for PostgreSQL:
-```ini
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/smarterp
-```
+The system automatically initializes default roles and users upon first startup:
 
-### Automatic Resilient Fallback:
-If a local PostgreSQL instance is not running on port 5432, SmartERP's engine automatically falls back to an embedded SQLite database (`backend/smarterp.db`) with zero downtime. This ensures tests, grading, and evaluation work immediately out-of-the-box!
+| Role | Username | Password | Access Level |
+|---|---|---|---|
+| **Administrator** | `admin` | `Admin@123` | Full system access, audit logs, all modules |
+| **Sales Manager** | `salesmgr` | `Manager@123` | Full sales lifecycle, quotations, orders, invoices, payments |
 
-To target a live PostgreSQL instance:
-1. Create the database in PostgreSQL:
-   ```sql
-   CREATE DATABASE smarterp;
-   ```
-2. Copy `backend/.env.example` to `backend/.env`:
-   ```ini
-   DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/smarterp
-   ```
-3. Run `python seed.py` or start the backend.
+*(You can also register custom accounts with any role directly on `/register`)*
 
 ---
 
-## 8. Running Automated Tests
+## 7. Running Automated Test Suites
 
-A comprehensive test suite is provided in `tests/test_module6.py` covering:
-- API health and metadata endpoints
-- User authentication, JWT tokens, duplicate registrations, invalid logins
-- Supplier CRUD, validation, and live financial metrics
-- Full Purchase Order lifecycle (draft, calculations, approval, dispatch, partial/complete goods receipt, and payment)
-- Operating expense submissions, status approvals, and analytics
-- Accounts Payable aging calculations and cash outflow transactions
-- Architectural placeholders for team modules (Modules 2, 3, 4, 5, 7)
-
-To execute the tests:
+Run all 8 automated pytest suites:
 ```powershell
-.\backend\.venv\Scripts\pytest.exe tests/ -v
+.\backend\.venv\Scripts\python -m pytest -v tests/
 ```
-
-Expected result:
-```text
-tests/test_module6.py::test_root_and_health PASSED
-tests/test_module6.py::test_auth_flow PASSED
-tests/test_module6.py::test_supplier_crud PASSED
-tests/test_module6.py::test_purchase_order_lifecycle PASSED
-tests/test_module6.py::test_expenses_management PASSED
-tests/test_module6.py::test_finance_overview_and_payables PASSED
-tests/test_module6.py::test_other_modules_placeholders PASSED
-======================== 7 passed in 1.97s =========================
+Output:
+```
+tests/test_auth.py::test_root_endpoint PASSED                            [ 12%]
+tests/test_auth.py::test_admin_login_success PASSED                      [ 25%]
+tests/test_auth.py::test_invalid_login_rejected PASSED                   [ 37%]
+tests/test_auth.py::test_user_registration_and_login PASSED              [ 50%]
+tests/test_sales_invoices.py::test_invoice_and_payment_auto_settlement PASSED [ 62%]
+tests/test_sales_orders.py::test_sales_order_lifecycle PASSED            [ 75%]
+tests/test_sales_quotations.py::test_list_quotations PASSED              [ 87%]
+tests/test_sales_quotations.py::test_create_and_convert_quotation PASSED [100%]
+======================== 8 passed in 2.63s =========================
 ```
 
 ---
 
-## 9. Architectural Integration Points for Team Members
+## 8. Database Configuration (PostgreSQL vs SQLite)
 
-When team members are ready to integrate their assigned modules:
-
-1. **Member 2 (HR Management)**:
-   - Link employee IDs to `expenses.created_by_id` for personal expense claims.
-   - Use `roles` table for department approval hierarchies.
-2. **Member 3 (CRM)**:
-   - Synchronize customer accounts with the shared financial ledger.
-3. **Member 4 (Inventory)**:
-   - Consume received items from `purchase_order_items.received_quantity` to trigger automatic warehouse stock intakes.
-4. **Member 5 (Sales)**:
-   - Record customer sales revenue invoices that offset procurement and operating expense outflows in the financial overview.
-5. **Member 7 (Dashboard & Analytics)**:
-   - Query `/api/v1/procurement/stats` and `/api/v1/finance/overview` to populate enterprise executive dashboards.
-
----
-
-## 10. Final Verification Checklist
-
-- [x] Full SmartERP enterprise architecture established with clean modular separation
-- [x] Module 6 (Procurement & Finance) 100% implemented and functional
-- [x] Supplier directory with CRUD, validations, metrics, and search
-- [x] Purchase orders with dynamic line items, auto-calculations, workflows, receipts, and payments
-- [x] Printable purchase order invoice / voucher modal with print stylesheets
-- [x] Operating expenses with categories, approval workflows, and analytics
-- [x] Accounts Payable aging dashboard (Current, 1-30, 31-60, 60+ days)
-- [x] Financial cash outflow ledger tracking all disbursements
-- [x] Secure JWT authentication with role-based access control
-- [x] Interactive test persona switcher (Admin, Procurement Lead, Finance Controller)
-- [x] Architectural route placeholders for team members (Modules 2, 3, 4, 5, 7)
-- [x] Automatic resilient database fallback (PostgreSQL primary with seamless SQLite fallback)
-- [x] Windows 1-click `start.bat` launcher
-- [x] 100% passing Pytest automated test suite
-- [x] Zero external paid APIs or Docker dependencies required
+- **Default Zero-Config Mode**: By default, `backend/.env` is configured to `sqlite:///./smarterp.db`. It starts immediately without requiring PostgreSQL to be running or configured.
+- **Production PostgreSQL Mode**:
+  1. Create a PostgreSQL database named `smarterp`:
+     ```sql
+     CREATE DATABASE smarterp;
+     ```
+  2. In `backend/.env`, set:
+     ```env
+     DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/smarterp
+     ```
+  3. Restart the backend. Tables and seeds are created automatically via SQLAlchemy ORM.
