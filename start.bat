@@ -1,88 +1,55 @@
 @echo off
-echo ========================================
-echo  SmartERP - Member 2: HR Management
-echo ========================================
+TITLE SmartERP Launcher
+echo ============================================================================
+echo                      Starting SmartERP Platform
+echo ============================================================================
 echo.
 
-echo [1/2] Starting FastAPI backend...
-start "SmartERP Backend" powershell -NoExit -Command ^
-  "cd '%~dp0backend'; if (-not (Test-Path .venv)) { python -m venv .venv }; .\.venv\Scripts\Activate.ps1; pip install -r requirements.txt -q; uvicorn app.main:app --reload --port 8000"
+SET ROOT_DIR=%~dp0
+cd /d "%ROOT_DIR%"
 
-timeout /t 3 /nobreak >nul
+:: Check if Node is in PATH, if not fallback to portable location
+where node >nul 2>nul
+if %ERRORLEVEL% NEQ 0 (
+    if exist "C:\Users\DELL\nodejs\node-v20.18.0-win-x64" (
+        set "PATH=C:\Users\DELL\nodejs\node-v20.18.0-win-x64;%PATH%"
+    )
+)
 
-echo [2/2] Starting React frontend...
-start "SmartERP Frontend" powershell -NoExit -Command ^
-  "cd '%~dp0frontend'; npm install; npm run dev"
-
-echo.
-echo ========================================
-echo  Backend:  http://localhost:8000
-echo  Frontend: http://localhost:5173
-echo  Swagger:  http://localhost:8000/docs
-echo ========================================
-echo ========================================================
-echo Starting SmartERP (FastAPI Backend + Vite/React Frontend)
-echo ========================================================
-
-:: 1. Launch FastAPI Backend in a new window
-echo Starting FastAPI Backend on http://localhost:8000 ...
-start "SmartERP Backend" powershell -NoExit -Command "cd backend; python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000"
-
-:: 2. Launch Vite Frontend in a new window
-echo Starting React Vite Frontend on http://localhost:5173 ...
-start "SmartERP Frontend" powershell -NoExit -Command "cd frontend; npm run dev"
-
-echo.
-echo ========================================================
-echo SmartERP services are starting!
-echo Frontend: http://localhost:5173
-echo Backend:  http://localhost:8000
-echo Swagger:  http://localhost:8000/docs
-echo ========================================================
-title SmartERP Launcher - Procurement & Finance
-cls
-echo ===============================================================================
-echo                     SMARTERP ENTERPRISE PLATFORM
-echo          Procurement & Finance Management (Suppliers, POs, Expenses, AP)
-echo ===============================================================================
-echo.
-echo [1/3] Checking environment...
-
-cd /d "%~dp0"
-
+:: Check Backend Virtualenv
 if not exist "backend\.venv\Scripts\python.exe" (
-    echo [ERROR] Python virtual environment not found in backend\.venv
-    echo Please create it using: cd backend ^& python -m venv .venv ^& .\.venv\Scripts\pip install -r requirements.txt
-    pause
-    exit /b 1
+    echo [INFO] Creating Python virtual environment in backend\.venv...
+    python -m venv backend\.venv
+    echo [INFO] Installing backend dependencies...
+    backend\.venv\Scripts\pip install -r backend\requirements.txt
 )
 
+:: Check Frontend node_modules
 if not exist "frontend\node_modules" (
-    echo [ERROR] Frontend node_modules not found.
-    echo Please run: cd frontend ^& npm install
-    pause
-    exit /b 1
+    echo [INFO] Installing frontend dependencies...
+    cd frontend
+    npm install
+    cd ..
 )
 
-echo [2/3] Launching FastAPI Backend on http://localhost:8000 ...
-start "SmartERP Backend (FastAPI)" powershell -NoExit -Command "cd '%~dp0backend'; .\.venv\Scripts\activate; uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload"
+echo [1/2] Launching SmartERP FastAPI Backend (http://localhost:8000)...
+start "SmartERP - Backend API" powershell -NoExit -Command "cd '%ROOT_DIR%backend'; .\.venv\Scripts\activate; uvicorn app.main:app --reload --port 8000"
 
-echo [3/3] Launching React Vite Frontend on http://localhost:5173 ...
-start "SmartERP Frontend (Vite)" powershell -NoExit -Command "cd '%~dp0frontend'; npm.cmd run dev"
+echo [2/2] Launching SmartERP React Frontend (http://localhost:5173)...
+start "SmartERP - Frontend Web" powershell -NoExit -Command "cd '%ROOT_DIR%frontend'; $env:PATH = 'C:\Users\DELL\nodejs\node-v20.18.0-win-x64;' + $env:PATH; npm run dev"
 
 echo.
-echo ===============================================================================
-echo SmartERP services are starting up!
+echo ============================================================================
+echo SmartERP successfully launched!
 echo.
-echo   - Frontend Portal:    http://localhost:5173
-echo   - Backend API:        http://localhost:8000
-echo   - Swagger API Docs:   http://localhost:8000/docs
-echo   - ReDoc API Docs:     http://localhost:8000/redoc
+echo - Web Application: http://localhost:5173
+echo - API Server:     http://localhost:8000
+echo - Swagger Docs:   http://localhost:8000/docs
 echo.
-echo Pre-configured Test Accounts:
-echo   - Admin User:         admin / Admin@123
-echo   - Procurement Lead:   sarah.procure / Procure@123
-echo   - Finance Controller: david.finance / Finance@123
-echo ===============================================================================
+echo Demo Credentials:
+echo   Administrator: admin / AdminPassword123!
+echo   Manager:       manager / ManagerPassword123!
+echo   Employee:      employee / EmployeePassword123!
+echo ============================================================================
 echo.
 pause
