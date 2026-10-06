@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 class ProductBase(BaseModel):
     product_code: str = Field(..., min_length=2, max_length=50, description="Unique product code (e.g. PRD-001)")
@@ -90,8 +90,7 @@ class ProductResponse(ProductBase):
     updated_at: datetime
     warehouses_stock: List[WarehouseStockSummary] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ProductListResponse(BaseModel):
     total: int

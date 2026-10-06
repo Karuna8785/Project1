@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 class CategoryBase(BaseModel):
     category_code: str = Field(..., min_length=2, max_length=50, description="Unique category code (e.g. CAT-ELEC)")
@@ -59,8 +59,7 @@ class CategoryResponse(CategoryBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CategoryListResponse(BaseModel):
     total: int
