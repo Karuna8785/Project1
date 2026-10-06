@@ -15,7 +15,7 @@ import {
 export default function Dashboard() {
   const teamModules = [
     {
-      role: 'Member 4',
+      category: 'Operations',
       title: 'Inventory Management',
       desc: 'Products, Categories, Warehouses, Stock Operations, Stock Movements, Low Stock Alerts.',
       path: '/inventory',
@@ -25,7 +25,7 @@ export default function Dashboard() {
       tag: 'Fully Implemented'
     },
     {
-      role: 'Member 1',
+      category: 'Security',
       title: 'Authentication & Security',
       desc: 'JWT Authentication, Roles, Permissions, User Management.',
       path: '/login',
@@ -35,54 +35,54 @@ export default function Dashboard() {
       tag: 'Operational'
     },
     {
-      role: 'Member 2',
+      category: 'Workforce',
       title: 'HR Management',
       desc: 'Employees, Departments, Attendance, Leave Management.',
       path: '/hr',
       icon: Users,
       color: 'bg-blue-50 text-blue-600 border-blue-200',
       active: false,
-      tag: 'Team Module'
+      tag: 'Upcoming'
     },
     {
-      role: 'Member 3',
+      category: 'Customer',
       title: 'CRM',
       desc: 'Customers, Leads, Customer Interactions, Pipeline.',
       path: '/crm',
       icon: UserCheck,
       color: 'bg-violet-50 text-violet-600 border-violet-200',
       active: false,
-      tag: 'Team Module'
+      tag: 'Upcoming'
     },
     {
-      role: 'Member 5',
+      category: 'Commerce',
       title: 'Sales Management',
       desc: 'Quotations, Orders, Invoices, Payments (integrates with Inventory deduct_stock).',
       path: '/sales',
       icon: ShoppingCart,
       color: 'bg-amber-50 text-amber-600 border-amber-200',
       active: false,
-      tag: 'Integration Point'
+      tag: 'Upcoming'
     },
     {
-      role: 'Member 6',
+      category: 'Finance',
       title: 'Procurement & Finance',
       desc: 'Suppliers, Purchase Orders, Invoices, Expenses (integrates with Inventory add_stock).',
       path: '/procurement',
       icon: Briefcase,
       color: 'bg-teal-50 text-teal-600 border-teal-200',
       active: false,
-      tag: 'Integration Point'
+      tag: 'Upcoming'
     },
     {
-      role: 'Member 7',
+      category: 'Intelligence',
       title: 'Dashboard, Reports & Integration',
       desc: 'Executive Dashboards, Inventory Valuation, Movement Reports, Cross-module Analytics.',
       path: '/reports',
       icon: BarChart3,
       color: 'bg-rose-50 text-rose-600 border-rose-200',
       active: false,
-      tag: 'Reporting Integration'
+      tag: 'Upcoming'
     },
   ];
 
@@ -93,13 +93,13 @@ export default function Dashboard() {
       <div className="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl p-6 lg:p-8 text-white mb-8 shadow-xl border border-indigo-900/50">
         <div className="max-w-3xl">
           <span className="text-xs font-bold tracking-wider text-indigo-400 uppercase bg-indigo-500/20 px-3 py-1 rounded-full border border-indigo-500/30">
-            Collaborative Enterprise System
+            Enterprise System
           </span>
           <h1 className="text-2xl lg:text-3xl font-extrabold mt-3 tracking-tight">
             Welcome to SmartERP
           </h1>
           <p className="mt-2 text-sm text-slate-300 leading-relaxed">
-            Welcome to the 7-Member Enterprise Resource Planning platform. As <strong className="text-white">Member 4 — Inventory Management Developer</strong>, the entire Inventory subsystem is ready for enterprise operations.
+            Integrated Enterprise Resource Planning platform. The complete <strong className="text-white">Inventory, Warehousing, and Stock Operations</strong> subsystem is active and fully functional.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
@@ -116,7 +116,7 @@ export default function Dashboard() {
 
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
-          7-Member Collaborative Modules
+          Enterprise ERP Modules
         </h2>
       </div>
 
@@ -144,7 +144,7 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wider mb-1">
-                  {m.role}
+                  {m.category}
                 </div>
                 <h3 className="text-sm font-bold text-slate-900 mb-1.5">{m.title}</h3>
                 <p className="text-xs text-slate-500 leading-relaxed mb-4">{m.desc}</p>

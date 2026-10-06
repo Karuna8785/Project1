@@ -23,7 +23,7 @@ def seed_database():
     try:
         print("Seeding permissions...")
         permissions_data = [
-            # Member 1 Auth & Security Permissions
+            # Authentication & Security Permissions
             ("AUTH_LOGIN", "User Login Permission", "AUTH"),
             ("AUTH_REGISTER", "User Registration Permission", "AUTH"),
             ("USER_CREATE", "Create System User", "USERS"),
@@ -34,7 +34,7 @@ def seed_database():
             ("ROLE_READ", "Read System Roles", "ROLES"),
             ("ROLE_UPDATE", "Update System Role", "ROLES"),
             ("ROLE_DELETE", "Delete System Role", "ROLES"),
-            # Member 4 Inventory Permissions
+            # Inventory Subsystem Permissions
             ("inventory.view", "View Inventory Subsystem", "INVENTORY"),
             ("inventory.product.create", "Create Product", "INVENTORY"),
             ("inventory.product.update", "Update Product", "INVENTORY"),

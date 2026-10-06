@@ -1,9 +1,9 @@
-# SmartERP — Member 4 Inventory Management Subsystem
+# SmartERP — Inventory Management Subsystem
 
-## 1. Overview & Team Responsibility
+## 1. Overview & Architecture
 
-SmartERP is an enterprise-grade ERP system built collaboratively by 7 team members. 
-**Member 4** is exclusively responsible for designing, implementing, and maintaining the **Inventory Management Subsystem**:
+SmartERP is an enterprise-grade ERP system built with a modular subsystem architecture. 
+The **Inventory Management Subsystem** provides:
 
 1. **Products Catalog**
 2. **Categories Management**
@@ -160,12 +160,12 @@ Inventory Subsystem
 
 ## 6. Cross-Module Integration Hooks
 
-### Integration with Member 1 (Authentication & RBAC)
+### Integration with Authentication & RBAC Subsystem
 - All inventory endpoints require a valid Bearer JWT.
 - Granular permissions enforced: `inventory.view`, `inventory.product.*`, `inventory.category.*`, `inventory.warehouse.*`, `inventory.stock.*`.
 - Actions record the operating `user_id` in `StockMovement.created_by`.
 
-### Integration with Member 5 (Sales Management)
+### Integration with Sales Management Subsystem
 When a Sales Order is confirmed and delivered:
 ```python
 from app.services.inventory_service import InventoryService
@@ -182,7 +182,7 @@ movement = InventoryService.deduct_stock(
 )
 ```
 
-### Integration with Member 6 (Procurement & Finance)
+### Integration with Procurement & Finance Subsystem
 When a Purchase Order shipment arrives:
 ```python
 from app.services.inventory_service import InventoryService
@@ -199,7 +199,7 @@ movement = InventoryService.add_stock(
 )
 ```
 
-### Integration with Member 7 (Dashboard & Reports)
+### Integration with Dashboard & Reports Subsystem
 Provides live summary metrics and financial valuation:
 ```python
 from app.services.inventory_service import InventoryService

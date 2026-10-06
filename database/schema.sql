@@ -1,6 +1,6 @@
 -- SmartERP Complete PostgreSQL Database Schema
 -- Collaborative Enterprise Resource Planning System
--- Member 1 (Auth & Security) + Member 4 (Inventory Management)
+-- Authentication & Security + Inventory Management Subsystems
 
 CREATE TABLE IF NOT EXISTS permissions (
     id SERIAL PRIMARY KEY,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 CREATE INDEX IF NOT EXISTS idx_audit_logs_timestamp ON audit_logs(timestamp);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
 
--- Member 4: Inventory Management Tables
+-- Inventory Management Subsystem Tables
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
     category_code VARCHAR(50) UNIQUE NOT NULL,

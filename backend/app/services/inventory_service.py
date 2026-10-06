@@ -300,7 +300,7 @@ class InventoryService:
             raise
 
     # -------------------------------------------------------------------------
-    # INTEGRATION HOOK: Member 5 (Sales)
+    # INTEGRATION HOOK: Sales Management Subsystem
     # -------------------------------------------------------------------------
     @staticmethod
     def deduct_stock(
@@ -313,7 +313,7 @@ class InventoryService:
         user_id: int | None = None
     ) -> StockMovement:
         """
-        Reusable integration service for Member 5 (Sales).
+        Reusable integration service for Sales Management Subsystem.
         Deducts stock atomically upon confirmed sales invoice/order.
         """
         _stock, movement = InventoryService.stock_out(
@@ -332,7 +332,7 @@ class InventoryService:
         return movement
 
     # -------------------------------------------------------------------------
-    # INTEGRATION HOOK: Member 6 (Procurement / Purchases)
+    # INTEGRATION HOOK: Procurement & Purchases Subsystem
     # -------------------------------------------------------------------------
     @staticmethod
     def add_stock(
@@ -345,7 +345,7 @@ class InventoryService:
         user_id: int | None = None
     ) -> StockMovement:
         """
-        Reusable integration service for Member 6 (Procurement).
+        Reusable integration service for Procurement & Purchases Subsystem.
         Increases stock atomically upon receipt of purchase shipment.
         """
         _stock, movement = InventoryService.stock_in(
@@ -363,7 +363,7 @@ class InventoryService:
         return movement
 
     # -------------------------------------------------------------------------
-    # INTEGRATION HOOK: Member 7 (Dashboard & Reports)
+    # INTEGRATION HOOK: Dashboard & Analytics Subsystem
     # -------------------------------------------------------------------------
     @staticmethod
     def get_inventory_summary(db: Session) -> dict:

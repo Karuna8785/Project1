@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Breadcrumb from '../../components/layout/Breadcrumb';
 import { Clock, ArrowLeft, Boxes } from 'lucide-react';
 
-export default function ComingSoonPage({ member, moduleName, description, icon: Icon }) {
+export default function ComingSoonPage({ category = 'Enterprise', moduleName, description, icon: Icon }) {
   return (
     <div>
       <Breadcrumb items={[{ label: moduleName, url: '#' }]} />
@@ -13,7 +13,7 @@ export default function ComingSoonPage({ member, moduleName, description, icon: 
           {Icon ? <Icon className="w-7 h-7" /> : <Clock className="w-7 h-7" />}
         </div>
         <span className="text-[11px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 px-3 py-1 rounded-full uppercase tracking-wider">
-          {member} Module
+          {category} Module
         </span>
         <h2 className="text-xl font-bold text-slate-900 mt-3">{moduleName}</h2>
         <div className="inline-block mt-2 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-xs font-semibold">
@@ -24,8 +24,8 @@ export default function ComingSoonPage({ member, moduleName, description, icon: 
         </p>
 
         <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-left text-xs text-slate-600">
-          <div className="font-semibold text-slate-800 mb-1">Architecture Boundary:</div>
-          <div>This module will be delivered by {member}. Member 4 (Inventory Subsystem) is fully implemented and operational with transactional services ready for cross-module integration.</div>
+          <div className="font-semibold text-slate-800 mb-1">Module Status:</div>
+          <div>This module is slated for upcoming release. The core Inventory and Supply Chain Subsystems are currently live and operational.</div>
         </div>
 
         <div className="mt-6">

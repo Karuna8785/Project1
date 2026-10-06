@@ -24,7 +24,7 @@ const mainNavigation = [
     path: '/inventory', 
     icon: Boxes, 
     highlight: true,
-    badge: 'Member 4',
+    badge: 'Active',
     children: [
       { name: 'Overview', path: '/inventory', icon: LayoutDashboard, end: true },
       { name: 'Products', path: '/inventory/products', icon: Package },
@@ -35,11 +35,11 @@ const mainNavigation = [
       { name: 'Low Stock Alerts', path: '/inventory/low-stock', icon: AlertTriangle, alert: true },
     ]
   },
-  { name: 'HR Management', path: '/hr', icon: Users, badge: 'Member 2' },
-  { name: 'CRM', path: '/crm', icon: UserCheck, badge: 'Member 3' },
-  { name: 'Sales', path: '/sales', icon: ShoppingCart, badge: 'Member 5' },
-  { name: 'Procurement', path: '/procurement', icon: Briefcase, badge: 'Member 6' },
-  { name: 'Reports', path: '/reports', icon: BarChart3, badge: 'Member 7' },
+  { name: 'HR Management', path: '/hr', icon: Users, badge: 'Upcoming' },
+  { name: 'CRM', path: '/crm', icon: UserCheck, badge: 'Upcoming' },
+  { name: 'Sales', path: '/sales', icon: ShoppingCart, badge: 'Upcoming' },
+  { name: 'Procurement', path: '/procurement', icon: Briefcase, badge: 'Upcoming' },
+  { name: 'Reports', path: '/reports', icon: BarChart3, badge: 'Upcoming' },
 ];
 
 export default function Sidebar() {
@@ -50,7 +50,7 @@ export default function Sidebar() {
           SmartERP Platform
         </div>
         <div className="text-xs text-indigo-400 mt-0.5">
-          Role: Member 4 (Inventory)
+          Role: Inventory & Operations
         </div>
       </div>
 

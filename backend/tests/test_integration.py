@@ -39,7 +39,7 @@ def test_sales_deduct_stock_integration(db):
     stock = InventoryService.get_or_create_stock(db, prod.id, wh.id)
     assert stock.available_quantity == 100
 
-    # Member 5 Sales integration: deduct 25 units for Invoice #INV-8888
+    # Sales subsystem integration: deduct 25 units for Invoice #INV-8888
     mv = InventoryService.deduct_stock(
         db=db,
         product_id=prod.id,

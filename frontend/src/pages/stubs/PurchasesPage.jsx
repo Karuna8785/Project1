@@ -5,9 +5,9 @@ import { Briefcase } from 'lucide-react';
 export default function PurchasesPage() {
   return (
     <ModuleStubPage
-      member="Member 6"
+      category="Procurement"
       moduleName="Procurement & Finance"
-      description="Suppliers, Purchase Orders, Purchase Invoices, and Expenses. Interacts with Member 4 via add_stock service."
+      description="Suppliers, Purchase Orders, Purchase Invoices, and Expenses. Interacts with Inventory via add_stock service."
       icon={Briefcase}
     />
   );

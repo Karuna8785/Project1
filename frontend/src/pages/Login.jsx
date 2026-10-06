@@ -49,7 +49,7 @@ export default function Login() {
           Enterprise Resource Planning System
         </h2>
         <div className="mt-1 text-center text-xs text-indigo-300 font-semibold">
-          Member 4 — Inventory Management System
+          Inventory & Operations Management
         </div>
       </div>
 
@@ -131,7 +131,7 @@ export default function Login() {
                 className="px-2.5 py-1.5 text-[11px] font-medium text-slate-700 bg-slate-50 hover:bg-indigo-50 hover:text-indigo-700 border border-slate-200 rounded-lg transition text-left"
               >
                 <div className="font-semibold text-slate-800">Inventory Mgr</div>
-                <div className="text-[10px] text-slate-400">Member 4 Access</div>
+                <div className="text-[10px] text-slate-400">Operations Access</div>
               </button>
             </div>
           </div>

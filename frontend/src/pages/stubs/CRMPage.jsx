@@ -5,7 +5,7 @@ import { UserCheck } from 'lucide-react';
 export default function CRMPage() {
   return (
     <ModuleStubPage
-      member="Member 3"
+      category="Customer"
       moduleName="Customer Relationship Management (CRM)"
       description="Customers, Leads, Pipeline, and Customer History tracking."
       icon={UserCheck}

@@ -576,7 +576,7 @@ export default function StockOverviewPage() {
                 onChange={(e) => setStockInForm({ ...stockInForm, reference_type: e.target.value })}
                 className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white"
               >
-                <option value="PURCHASE">Purchase Order (Member 6)</option>
+                <option value="PURCHASE">Purchase Order (Procurement)</option>
                 <option value="MANUAL">Manual Stock In</option>
                 <option value="RETURN">Customer Return</option>
               </select>
@@ -685,7 +685,7 @@ export default function StockOverviewPage() {
                 onChange={(e) => setStockOutForm({ ...stockOutForm, reference_type: e.target.value })}
                 className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white"
               >
-                <option value="SALE">Sales Order (Member 5)</option>
+                <option value="SALE">Sales Order (Sales)</option>
                 <option value="MANUAL">Manual Stock Out</option>
                 <option value="DAMAGE">Damaged / Written-Off</option>
               </select>

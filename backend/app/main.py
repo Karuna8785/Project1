@@ -24,7 +24,7 @@ with SessionLocal() as db:
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="SmartERP Enterprise Resource Planning System — Collaborative Platform (Member 1 Auth & Security, Member 4 Inventory)",
+    description="SmartERP Enterprise Resource Planning System — Modular Enterprise Architecture with Active Inventory and Security Subsystems",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/api/openapi.json"
@@ -39,17 +39,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Authentication & Security (Member 1)
+# Authentication & Security Subsystem
 app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(users.router, prefix=settings.API_V1_STR)
 
-# Inventory Management Subsystem (Member 4)
+# Inventory Management Subsystem
 app.include_router(categories.router, prefix=settings.API_V1_STR)
 app.include_router(products.router, prefix=settings.API_V1_STR)
 app.include_router(warehouses.router, prefix=settings.API_V1_STR)
 app.include_router(inventory.router, prefix=settings.API_V1_STR)
 
-# Module Placeholders for Teammates
+# Planned Enterprise Subsystems
 app.include_router(hr.router, prefix=settings.API_V1_STR)
 app.include_router(crm.router, prefix=settings.API_V1_STR)
 

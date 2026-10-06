@@ -5,9 +5,9 @@ import { BarChart3 } from 'lucide-react';
 export default function ReportsPage() {
   return (
     <ModuleStubPage
-      member="Member 7"
-      moduleName="Dashboard, Reports & Integration"
-      description="Cross-module Analytics, Inventory Valuation, and Management Reporting."
+      category="Intelligence"
+      moduleName="Dashboard, Reports & Analytics"
+      description="Cross-module Analytics, Inventory Valuation, and Executive Management Reporting."
       icon={BarChart3}
     />
   );

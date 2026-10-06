@@ -1,22 +1,22 @@
 # SmartERP — Enterprise Resource Planning Platform
 
-SmartERP is a production-grade, collaborative Enterprise Resource Planning system built with modern Python (FastAPI, SQLAlchemy 2.0, Pydantic v2), React.js (Vite, Tailwind CSS, Recharts), and PostgreSQL.
+SmartERP is a production-grade Enterprise Resource Planning system built with modern Python (FastAPI, SQLAlchemy 2.0, Pydantic v2), React.js (Vite, Tailwind CSS, Recharts), and PostgreSQL.
 
 ---
 
-## 1. Collaborative Team Allocation
+## 1. System Architecture & Subsystems
 
-SmartERP is divided into specialized modules owned by 7 developers:
+SmartERP is structured into specialized enterprise subsystems:
 
-| Member | Responsibility | Modules / Scope | Status |
-|---|---|---|---|
-| **Member 1** | **Authentication & Security** | JWT, Login, Register, Roles, Permissions, Audit Logging | **Fully Implemented** |
-| Member 2 | HR Management | Employees, Departments, Attendance, Leave | Placeholder Ready |
-| Member 3 | CRM | Customers, Leads, Customer History | Placeholder Ready |
-| **Member 4** | **Inventory Management** | Products, Categories, Warehouses, Stock In/Out/Transfer, Low Stock Alerts, Stock Movements | **Fully Implemented** |
-| Member 5 | Sales Management | Quotations, Orders, Invoices (uses Inventory `deduct_stock`) | Integration Point Ready |
-| Member 6 | Procurement & Finance | Suppliers, Purchase Orders, Invoices (uses Inventory `add_stock`) | Integration Point Ready |
-| Member 7 | Dashboard & Reports | Executive Analytics (uses Inventory `get_inventory_summary`) | Integration Point Ready |
+| Subsystem | Functional Scope | Status |
+|---|---|---|
+| **Authentication & Security** | JWT, Login, Register, Roles, Permissions, Audit Logging | **Fully Implemented** |
+| **Human Resources (HR)** | Employees, Departments, Attendance, Leave | Architectural Stub Ready |
+| **Customer Relationship Management (CRM)** | Customers, Leads, Pipeline Tracking | Architectural Stub Ready |
+| **Inventory Management** | Products, Categories, Warehouses, Stock In/Out/Transfer, Low Stock Alerts, Stock Movements | **Fully Implemented** |
+| **Sales Management** | Quotations, Orders, Invoices (uses Inventory `deduct_stock`) | Integration Point Ready |
+| **Procurement & Finance** | Suppliers, Purchase Orders, Invoices (uses Inventory `add_stock`) | Integration Point Ready |
+| **Dashboard & Reports** | Executive Analytics (uses Inventory `get_inventory_summary`) | Integration Point Ready |
 
 ---
 
@@ -56,8 +56,8 @@ SmartERP/
 │   │   │   ├── auth/       # Login, Register
 │   │   │   ├── dashboard/  # Main Dashboard
 │   │   │   ├── profile/    # User Profile & Roles/Permissions
-│   │   │   ├── inventory/  # Member 4 Inventory (Overview, Products, Categories, Warehouses, Stock, Movements, Low Stock)
-│   │   │   └── placeholders/ # Team module placeholders
+│   │   │   ├── inventory/  # Inventory Subsystem (Overview, Products, Categories, Warehouses, Stock, Movements, Low Stock)
+│   │   │   └── placeholders/ # Enterprise subsystem placeholders
 │   │   ├── routes/         # ProtectedRoute guard
 │   │   └── App.jsx
 │   ├── index.html
@@ -67,7 +67,7 @@ SmartERP/
 │   ├── schema.sql          # Raw PostgreSQL DDL script
 │   └── seed.py             # Database seed script for roles, permissions, users, initial stock
 ├── docs/
-│   └── INVENTORY_MODULE.md # Comprehensive Member 4 technical documentation
+│   └── INVENTORY_MODULE.md # Comprehensive Inventory Subsystem technical documentation
 ├── start.bat               # Windows one-click startup runner
 └── README.md
 ```
@@ -128,11 +128,11 @@ The initial seed script creates two operational enterprise accounts:
 | Role | Username | Password | Access Scope |
 |---|---|---|---|
 | **Administrator** | `admin` | `Admin@123` | Full system access across all modules |
-| **Inventory Manager** | `inventory_manager` | `Inventory@123` | Full access to Member 4 Inventory Subsystem |
+| **Inventory Manager** | `inventory_manager` | `Inventory@123` | Full access to Inventory Subsystem |
 
 ---
 
-## 6. Member 4 Inventory Management Subsystem
+## 6. Inventory Management Subsystem
 
 The Inventory Subsystem contains complete operational features:
 - **Products**: Full CRUD, SKU/Barcode unique enforcement, non-negative pricing validation, category assignment, warehouse breakdown, safe deactivation protection.
@@ -165,4 +165,4 @@ Test coverage includes:
 - Stock Adjustment with reason
 - Warehouse Transfer and atomic rollback
 - Low stock and out-of-stock detection
-- Member 5 (Sales `deduct_stock`) and Member 6 (Procurement `add_stock`) integration services
+- Sales (`deduct_stock`) and Procurement (`add_stock`) integration services

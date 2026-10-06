@@ -54,8 +54,8 @@ export default function InventoryLayout() {
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
               Inventory Management Subsystem
             </h1>
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
-              Member 4
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              Active Module
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">

@@ -5,7 +5,7 @@ import { NotificationProvider } from './context/NotificationContext';
 import AppLayout from './components/layout/AppLayout';
 import ProtectedRoute from './routes/ProtectedRoute';
 
-// Auth Pages (Member 1)
+// Authentication & Security Subsystem
 import Login from './pages/Login';
 import Register from './pages/auth/Register';
 import Profile from './pages/profile/Profile';
@@ -13,7 +13,7 @@ import Profile from './pages/profile/Profile';
 // Dashboard
 import Dashboard from './pages/Dashboard';
 
-// Member 4 Inventory Pages
+// Inventory Management Subsystem Pages
 import InventoryLayout from './pages/inventory/InventoryLayout';
 import InventoryOverview from './pages/inventory/InventoryOverview';
 import ProductsPage from './pages/inventory/ProductsPage';
@@ -23,7 +23,7 @@ import StockOverviewPage from './pages/inventory/StockOverviewPage';
 import StockMovementsPage from './pages/inventory/StockMovementsPage';
 import LowStockPage from './pages/inventory/LowStockPage';
 
-// Placeholder Pages for Teammates
+// Enterprise Subsystem Placeholders
 import ComingSoonPage from './pages/placeholders/ComingSoonPage';
 import { Users, UserCheck, ShoppingCart, Briefcase, DollarSign, BarChart3 } from 'lucide-react';
 
@@ -43,7 +43,7 @@ export default function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
 
-              {/* Member 4: Inventory Management Subsystem */}
+              {/* Inventory Management Subsystem */}
               <Route path="/inventory" element={<InventoryLayout />}>
                 <Route index element={<InventoryOverview />} />
                 <Route path="products" element={<ProductsPage />} />
@@ -54,12 +54,12 @@ export default function App() {
                 <Route path="low-stock" element={<LowStockPage />} />
               </Route>
 
-              {/* Teammate Placeholders (Coming Soon) */}
+              {/* Planned Module Placeholders (Upcoming) */}
               <Route 
                 path="/hr" 
                 element={
                   <ComingSoonPage 
-                    member="Member 2" 
+                    category="Workforce" 
                     moduleName="Human Resources Management" 
                     description="Employee records, departments, shifts, attendance tracking, and leave management." 
                     icon={Users} 
@@ -70,7 +70,7 @@ export default function App() {
                 path="/crm" 
                 element={
                   <ComingSoonPage 
-                    member="Member 3" 
+                    category="Customer" 
                     moduleName="Customer Relationship Management" 
                     description="Customers database, lead conversion pipeline, communication logs, and customer history." 
                     icon={UserCheck} 
@@ -81,7 +81,7 @@ export default function App() {
                 path="/sales" 
                 element={
                   <ComingSoonPage 
-                    member="Member 5" 
+                    category="Commerce" 
                     moduleName="Sales Management" 
                     description="Quotations, sales orders, invoices, and payment receipts. Integrates with Inventory via deduct_stock service." 
                     icon={ShoppingCart} 
@@ -92,7 +92,7 @@ export default function App() {
                 path="/procurement" 
                 element={
                   <ComingSoonPage 
-                    member="Member 6" 
+                    category="Purchasing" 
                     moduleName="Procurement & Suppliers" 
                     description="Vendor management, purchase orders, goods receipt notes, and purchase invoices. Integrates with Inventory via add_stock service." 
                     icon={Briefcase} 
@@ -103,7 +103,7 @@ export default function App() {
                 path="/finance" 
                 element={
                   <ComingSoonPage 
-                    member="Member 6" 
+                    category="Finance" 
                     moduleName="Financial Ledger & Expenses" 
                     description="General ledger, chart of accounts, operational expenses, and balance sheets." 
                     icon={DollarSign} 
@@ -114,7 +114,7 @@ export default function App() {
                 path="/reports" 
                 element={
                   <ComingSoonPage 
-                    member="Member 7" 
+                    category="Analytics" 
                     moduleName="Executive Dashboard & Analytics" 
                     description="Cross-module KPI summaries, inventory valuation reports, sales forecasting, and custom reports." 
                     icon={BarChart3} 
